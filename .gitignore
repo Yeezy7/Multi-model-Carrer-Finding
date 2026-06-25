@@ -1,0 +1,12 @@
+
+.vsocde
+
+# 数据
+transformer/data/training-parallel-nc-v13
+
+pytorch/vgg16_method1.pth
+pytorch/vgg16_method2.pth
+
+**__pycache__/
+
+CLAUDE.md
