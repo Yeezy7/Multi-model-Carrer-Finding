@@ -19,22 +19,22 @@ class SiglipOutput(ModelOutput):
     image_embeds: torch.FloatTensor = None
     
     
-class Siglipconfig(PreTrainedModel):
+class SiglipConfig(PretrainedConfig):
     model_type = "siglip"
-    def __init__(self, 
+    def __init__(self,
                  vision_model_name_or_path: str = "openai/clip-vit-base-patch32",
                  text_model_name_or_path: str = "openai/clip-vit-base-patch32",):
         
-        super(self, Siglipconfig).__init__()
+        super(SiglipConfig, self).__init__()
         self.vision_model_name_or_path = vision_model_name_or_path
         self.text_model_name_or_path = text_model_name_or_path
 
 
 class SiglipModel(PreTrainedModel):
     model_type = "siglip"
-    def __init__(self, config: Siglipconfig):
+    def __init__(self, config: SiglipConfig):
         
-        super(self, SiglipModel).__init__()
+        super(SiglipModel, self).__init__(config)
         self.vision_model = AutoModel.from_pretrained(config.vision_model_name_or_path)
         self.process = AutoProcessor.from_pretrained(config.vision_model_name_or_path)
         self.text_model = AutoModel.from_pretrained(config.text_model_name_or_path)
