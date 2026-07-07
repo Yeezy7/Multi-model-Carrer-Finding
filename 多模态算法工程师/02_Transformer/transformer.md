@@ -11,9 +11,9 @@ order: 1
 
 ## 一句话解释
 
-Transformer 是一种基于自注意力机制的神经网络架构，摒弃了传统的循环和卷积结构，完全依赖注意力机制来捕捉序列中的依赖关系，实现了高效的并行计算。
+Transformer 是一种基于自注意力机制（Self-Attention）的神经网络架构，摒弃了传统的循环和卷积结构，完全依赖注意力机制来捕捉序列中的依赖关系，实现了高效的并行计算。
 
-## 它解决什么问题
+## 1. 它解决什么问题
 
 传统的 RNN 和 LSTM 存在以下问题：
 - **无法并行计算**：必须按顺序处理序列，训练速度慢
@@ -22,9 +22,9 @@ Transformer 是一种基于自注意力机制的神经网络架构，摒弃了�
 
 Transformer 通过自注意力机制解决了这些问题，允许序列中任意位置直接交互，实现完全并行化计算。
 
-## 架构总览
+## 2. 架构总览
 
-### 原始 Transformer 架构图
+### 2.1 原始 Transformer 架构图
 
 ![Transformer 架构](https://jalammar.github.io/images/t/The_transformer_architecture_1.png)
 
@@ -37,7 +37,7 @@ Transformer 采用**编码器-解码器（Encoder-Decoder）**结构：
 
 每个编码器和解码器由 $N$ 个相同的层堆叠而成（原论文 $N=6$）。
 
-### 完整数据流图
+### 2.2 完整数据流图
 
 ```
 输入序列 → [Input Embedding + Positional Encoding]
@@ -87,9 +87,11 @@ Transformer 采用**编码器-解码器（Encoder-Decoder）**结构：
                         输出概率
 ```
 
-## 核心思想
+> **💡 Tip**：理解架构图时，重点把握"编码器输出如何流入解码器的交叉注意力层"——这是 Encoder-Decoder 模型的核心信息传递路径。
 
-### 自注意力机制（Self-Attention）
+## 3. 核心思想
+
+### 3.1 自注意力机制（Self-Attention）
 
 自注意力的核心思想是：**序列中的每个位置都可以直接关注其他所有位置**，无需通过循环传递信息。
 
@@ -97,7 +99,7 @@ Transformer 采用**编码器-解码器（Encoder-Decoder）**结构：
 
 *图源：The Illustrated Transformer*
 
-### 多头注意力（Multi-Head Attention）
+### 3.2 多头注意力（Multi-Head Attention）
 
 多头注意力将注意力计算拆分为多个"头"，每个头独立计算注意力后拼接：
 
@@ -110,7 +112,9 @@ Transformer 采用**编码器-解码器（Encoder-Decoder）**结构：
 - **位置编码**：注入序列位置信息，弥补自注意力缺乏位置感知的问题
 - **残差连接 + 层归一化**：稳定训练，防止梯度消失
 
-## 数学定义
+> **💡 Tip**：自注意力的"自"指的是 Q、K、V 都来自同一个序列。如果 Q 来自解码器而 K、V 来自编码器，则称为交叉注意力（Cross-Attention）。
+
+## 4. 数学定义
 
 ### 1. 自注意力计算
 
@@ -201,7 +205,9 @@ $$\text{LayerNorm}(x) = \gamma \cdot \frac{x - \mu}{\sigma + \epsilon} + \beta$$
 
 残差连接保证梯度直接回传，层归一化稳定每层的输入分布。
 
-## 完整实现代码
+> **💡 Tip**：注意力公式中 $\sqrt{d_k}$ 的缩放是面试高频考点。本质是假设 Q、K 元素服从标准正态分布时，点积的方差为 $d_k$，除以 $\sqrt{d_k}$ 将方差归一化为 1。
+
+## 5. 完整实现代码
 
 ### 1. 位置编码
 
@@ -438,7 +444,9 @@ class Transformer(nn.Module):
         return output
 ```
 
-## 输入到输出的完整推演
+> **💡 Tip**：实际工程中，`generate_mask` 里的 `src_mask` 用于过滤 padding token，`tgt_mask` 用于保证自回归生成时只看到历史 token。两者缺一不可。
+
+## 6. 输入到输出的完整推演
 
 以**英译中**任务为例，展示数据如何流经整个 Transformer。
 
@@ -535,7 +543,7 @@ tgt_mask = [
 ]
 ```
 
-## 面试标准回答
+## 7. 面试标准回答
 
 **"请介绍一下 Transformer 架构"**
 
@@ -551,7 +559,9 @@ Transformer 是 2017 年 Google 在论文 "Attention is All You Need" 中提出�
 
 使用 $\sqrt{d_k}$ 缩放是为了防止 $d_k$ 较大时点积结果过大。假设 $Q$ 和 $K$ 的每个元素独立同分布，均值为 0，方差为 1，那么 $Q \cdot K$ 的方差为 $d_k$。当 $d_k=64$ 时，点积值可能达到 $\pm 16$，导致 softmax 输出趋向 one-hot 分布，梯度接近于 0。除以 $\sqrt{d_k}$ 将方差归一化为 1，保证 softmax 有效工作。
 
-## 高频追问
+> **💡 Tip**：面试回答时，先说"一句话核心"，再展开细节，最后联系工程（如 BERT/GPT 的应用），形成"总-分-总"结构。
+
+## 常见追问
 
 ### Q1: 为什么需要位置编码？
 
@@ -573,7 +583,7 @@ Transformer 没有循环或卷积结构，自注意力计算是置换不变的�
 
 解码器的交叉注意力中，Query 来自解码器上一层输出，Key 和 Value 来自编码器输出。这使得解码器在生成每个 token 时都能"查阅"整个源序列的信息，实现源序列与目标序列的对齐。
 
-## 工程实践
+## 8. 工程实践
 
 ### 训练技巧
 
@@ -600,6 +610,8 @@ Transformer 没有循环或卷积结构，自注意力计算是置换不变的�
 | 层数 $N$ | 6 | 6 |
 | 参数量 | 65M | 213M |
 
+> **💡 Tip**：KV Cache 是推理优化的第一步，它将自回归生成的时间复杂度从 $O(n^2)$ 降到 $O(n)$，但会额外占用显存。实际部署时需要在速度和显存之间权衡。
+
 ## 常见误区
 
 - **误区**：Transformer 只能用于 NLP
@@ -614,9 +626,20 @@ Transformer 没有循环或卷积结构，自注意力计算是置换不变的�
 - **误区**：Transformer 训练一定比 RNN 快
   **事实**：虽然可以并行，但自注意力的 $O(n^2)$ 复杂度在长序列上可能更慢
 
-## 参考资料
+## 参考文献
 
 - [Attention Is All You Need](https://arxiv.org/abs/1706.03762) - 原始论文
 - [The Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/) - 图解 Transformer
 - [Harvard NLP: The Annotated Transformer](https://nlp.seas.harvard.edu/annotated-transformer/) - 注释版实现
 - [Transformer: A Novel Neural Network Architecture for Language Understanding](https://ai.googleblog.com/2017/08/transformer-novel-neural-network.html) - Google 官方博客
+
+## ✅ 自我检验
+
+- [ ] 能用自己的话解释 Transformer 的核心思想
+- [ ] 能说出它解决了什么问题（对比 RNN/LSTM）
+- [ ] 能写出注意力公式并解释每个变量（Q、K、V、缩放因子）
+- [ ] 能解释多头注意力的作用和实现方式
+- [ ] 能说出位置编码的必要性及常见方案
+- [ ] 能用 PyTorch 实现一个最简版 Transformer
+- [ ] 能说出 2-3 个工程实践中的优化手段（KV Cache、Flash Attention 等）
+- [ ] 能回答常见面试追问（位置编码、复杂度、掩码作用等）
