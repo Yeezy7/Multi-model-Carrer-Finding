@@ -1,0 +1,21 @@
+
+.vscode
+.skills
+.obsidian
+
+AI-Agent/config.py
+
+# 多模态
+多模态算法工程师/01. pytorch/vgg16_method1.pth
+多模态算法工程师/01. pytorch/vgg16_method2.pth
+多模态算法工程师/02. transformer/data/training-parallel-nc-v13
+多模态算法工程师/02. transformer/tokenizer
+多模态算法工程师/04_SigLIP/outputs
+多模态算法工程师/04_SigLIP/dataset
+
+**__pycache__/
+
+CLAUDE.md
+
+pre-trained-model
+AI-Agent/hello_agent/.env

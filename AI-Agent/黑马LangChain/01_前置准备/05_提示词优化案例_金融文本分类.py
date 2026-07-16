@@ -54,8 +54,7 @@ for key, value in examples_data.items():
 # 向模型提问
 for q in questions:
     response = client.chat.completions.create(
-        # model="qwen3-max",
-        model="qwen3:4b",
+        model="qwen3-max",
         messages=messages + [{"role": "user", "content": f"按照示例，回答这段文本的分类类别：{q}"}]
     )
  
