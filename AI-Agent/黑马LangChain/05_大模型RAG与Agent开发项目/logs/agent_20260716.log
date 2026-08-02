@@ -1,0 +1,404 @@
+2026-07-16 09:58:32,866 - agent - INFO - logger_handler.py:54 - 这是一条INFO日志
+2026-07-16 09:58:32,866 - agent - DEBUG - logger_handler.py:55 - 这是一条DEBUG日志
+2026-07-16 09:58:32,866 - agent - ERROR - logger_handler.py:56 - 这是一条ERROR日志
+2026-07-16 09:58:32,866 - agent - WARNING - logger_handler.py:57 - 这是一条WARNING日志
+2026-07-16 13:32:41,744 - agent - ERROR - prompt_loader.py:16 - [load_system_prompt] 加载系统提示词失败: [Errno 2] No such file or directory: 'prompts/main_prompt.txt'
+2026-07-16 14:37:03,856 - agent - ERROR - vector_store.py:98 - [load_document] 读取文件内容时出错: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/选购指南.txt, 错误: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+Traceback (most recent call last):
+  File "/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/rag/vector_store.py", line 93, in load_document
+    self.vector_store.add_documents(split_document)  # 添加到向量库
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_core/vectorstores/base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_chroma/vectorstores.py", line 627, in add_texts
+    embeddings = self._embedding_function.embed_documents(texts)
+AttributeError: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+2026-07-16 14:37:03,857 - agent - ERROR - vector_store.py:98 - [load_document] 读取文件内容时出错: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/扫地机器人100问2.txt, 错误: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+Traceback (most recent call last):
+  File "/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/rag/vector_store.py", line 93, in load_document
+    self.vector_store.add_documents(split_document)  # 添加到向量库
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_core/vectorstores/base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_chroma/vectorstores.py", line 627, in add_texts
+    embeddings = self._embedding_function.embed_documents(texts)
+AttributeError: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+2026-07-16 14:37:03,859 - agent - ERROR - vector_store.py:98 - [load_document] 读取文件内容时出错: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/故障排除.txt, 错误: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+Traceback (most recent call last):
+  File "/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/rag/vector_store.py", line 93, in load_document
+    self.vector_store.add_documents(split_document)  # 添加到向量库
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_core/vectorstores/base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_chroma/vectorstores.py", line 627, in add_texts
+    embeddings = self._embedding_function.embed_documents(texts)
+AttributeError: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+2026-07-16 14:37:03,860 - agent - ERROR - vector_store.py:98 - [load_document] 读取文件内容时出错: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt, 错误: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+Traceback (most recent call last):
+  File "/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/rag/vector_store.py", line 93, in load_document
+    self.vector_store.add_documents(split_document)  # 添加到向量库
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_core/vectorstores/base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_chroma/vectorstores.py", line 627, in add_texts
+    embeddings = self._embedding_function.embed_documents(texts)
+AttributeError: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+2026-07-16 14:37:24,366 - agent - ERROR - vector_store.py:98 - [load_document] 读取文件内容时出错: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/选购指南.txt, 错误: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+Traceback (most recent call last):
+  File "/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/rag/vector_store.py", line 93, in load_document
+    self.vector_store.add_documents(split_document)  # 添加到向量库
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_core/vectorstores/base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_chroma/vectorstores.py", line 627, in add_texts
+    embeddings = self._embedding_function.embed_documents(texts)
+AttributeError: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+2026-07-16 14:37:24,367 - agent - ERROR - vector_store.py:98 - [load_document] 读取文件内容时出错: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/扫地机器人100问2.txt, 错误: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+Traceback (most recent call last):
+  File "/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/rag/vector_store.py", line 93, in load_document
+    self.vector_store.add_documents(split_document)  # 添加到向量库
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_core/vectorstores/base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_chroma/vectorstores.py", line 627, in add_texts
+    embeddings = self._embedding_function.embed_documents(texts)
+AttributeError: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+2026-07-16 14:37:24,369 - agent - ERROR - vector_store.py:98 - [load_document] 读取文件内容时出错: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/故障排除.txt, 错误: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+Traceback (most recent call last):
+  File "/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/rag/vector_store.py", line 93, in load_document
+    self.vector_store.add_documents(split_document)  # 添加到向量库
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_core/vectorstores/base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_chroma/vectorstores.py", line 627, in add_texts
+    embeddings = self._embedding_function.embed_documents(texts)
+AttributeError: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+2026-07-16 14:37:24,370 - agent - ERROR - vector_store.py:98 - [load_document] 读取文件内容时出错: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt, 错误: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+Traceback (most recent call last):
+  File "/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/rag/vector_store.py", line 93, in load_document
+    self.vector_store.add_documents(split_document)  # 添加到向量库
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_core/vectorstores/base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_chroma/vectorstores.py", line 627, in add_texts
+    embeddings = self._embedding_function.embed_documents(texts)
+AttributeError: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+2026-07-16 14:45:14,017 - agent - ERROR - vector_store.py:98 - [load_document] 读取文件内容时出错: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/选购指南.txt, 错误: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+Traceback (most recent call last):
+  File "/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/rag/vector_store.py", line 93, in load_document
+    self.vector_store.add_documents(split_document)  # 添加到向量库
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_core/vectorstores/base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_chroma/vectorstores.py", line 627, in add_texts
+    embeddings = self._embedding_function.embed_documents(texts)
+AttributeError: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+2026-07-16 14:45:14,020 - agent - ERROR - vector_store.py:98 - [load_document] 读取文件内容时出错: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/扫地机器人100问2.txt, 错误: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+Traceback (most recent call last):
+  File "/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/rag/vector_store.py", line 93, in load_document
+    self.vector_store.add_documents(split_document)  # 添加到向量库
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_core/vectorstores/base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_chroma/vectorstores.py", line 627, in add_texts
+    embeddings = self._embedding_function.embed_documents(texts)
+AttributeError: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+2026-07-16 14:45:14,022 - agent - ERROR - vector_store.py:98 - [load_document] 读取文件内容时出错: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/故障排除.txt, 错误: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+Traceback (most recent call last):
+  File "/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/rag/vector_store.py", line 93, in load_document
+    self.vector_store.add_documents(split_document)  # 添加到向量库
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_core/vectorstores/base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_chroma/vectorstores.py", line 627, in add_texts
+    embeddings = self._embedding_function.embed_documents(texts)
+AttributeError: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+2026-07-16 14:45:14,024 - agent - ERROR - vector_store.py:98 - [load_document] 读取文件内容时出错: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt, 错误: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+Traceback (most recent call last):
+  File "/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/rag/vector_store.py", line 93, in load_document
+    self.vector_store.add_documents(split_document)  # 添加到向量库
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_core/vectorstores/base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+  File "/opt/miniconda3/envs/transformers/lib/python3.10/site-packages/langchain_chroma/vectorstores.py", line 627, in add_texts
+    embeddings = self._embedding_function.embed_documents(texts)
+AttributeError: 'EmbeddingsModelFactory' object has no attribute 'embed_documents'
+2026-07-16 14:46:16,724 - agent - INFO - vector_store.py:94 - [load_document] 成功加载文件到知识库: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/选购指南.txt
+2026-07-16 14:46:18,613 - agent - INFO - vector_store.py:94 - [load_document] 成功加载文件到知识库: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/扫地机器人100问2.txt
+2026-07-16 14:46:23,132 - agent - INFO - vector_store.py:94 - [load_document] 成功加载文件到知识库: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/故障排除.txt
+2026-07-16 14:46:25,562 - agent - INFO - vector_store.py:94 - [load_document] 成功加载文件到知识库: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt
+2026-07-16 14:49:48,090 - agent - INFO - vector_store.py:79 - [load_document] 文件已存在知识库中，跳过: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/选购指南.txt
+2026-07-16 14:49:48,090 - agent - INFO - vector_store.py:79 - [load_document] 文件已存在知识库中，跳过: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/扫地机器人100问2.txt
+2026-07-16 14:49:48,090 - agent - INFO - vector_store.py:79 - [load_document] 文件已存在知识库中，跳过: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/故障排除.txt
+2026-07-16 14:49:48,091 - agent - INFO - vector_store.py:79 - [load_document] 文件已存在知识库中，跳过: /Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt
+2026-07-16 15:01:45,059 - agent - ERROR - prompt_loader.py:32 - [load_rag_summarize_prompt] 加载RAG摘要提示词失败: [Errno 2] No such file or directory: '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/prompts/rag_summarize_prompt.txt'
+2026-07-16 15:03:12,552 - agent - INFO - rag_service.py:46 - [rag_summarize] 检索到 3 条相关文档
+2026-07-16 15:04:50,301 - agent - INFO - rag_service.py:49 - [rag_summarize] 检索到 3 条相关文档
+2026-07-16 15:05:56,661 - agent - INFO - rag_service.py:49 - [rag_summarize] 检索到 3 条相关文档。
+ 内容如下：【参考资料1】:
+扫地/扫拖一体机器人选购指南200条
+
+1. 选购核心：优先明确使用场景，独居小户型侧重轻便灵活，多口之家带宠物需强化吸力和防缠绕功能。
+
+2. 吸力参数：家用建议选择≥3000Pa吸力机型，地毯场景需≥4000Pa，吸力可调节更适配不同地面。
+
+3. 导航技术：激光导航定位精准、抗干扰强，适合复杂户型；视觉导航性价比高，避免强光环境使用。
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/选购指南.txt'}
+
+【参考资料2】:
+71. **租房党、小户型适合什么清扫模式？**
+- 开启“一键清扫”或“迷你清扫”模式，设置定时清扫，每天短时间清扫，保证地面干净。
+72. **机器人可以清理宠物猫砂、狗砂吗？**
+- 可清理轻微散落的猫砂、狗砂，调至大吸力模式，避免大颗粒猫砂卡入滚刷，及时清理尘盒。
+73. **厨房地面有油污怎么清理？**
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/扫地机器人100问2.txt'}
+
+【参考资料3】:
+11. 机身高度：床底/沙发底高度≤8cm，需选机身高度≤7.5cm机型，避免无法进入清扫死角。
+
+12. 越障能力：门槛高度≤2cm选越障≥2cm机型，地毯场景需强化驱动轮动力，避免卡困。
+
+13. 过滤系统：HEPA滤网等级≥H13可过滤细小灰尘和过敏原，过敏体质家庭必备，注意滤网是否可水洗。
+
+14. 主刷设计：防缠绕主刷（带硅胶条）适合长发/宠物家庭，无主刷款适合短毛地毯和硬质地面。
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/选购指南.txt'}
+
+
+2026-07-16 15:07:00,208 - agent - INFO - rag_service.py:49 - [rag_summarize] 检索到 0 条相关文档。
+ 内容如下：
+2026-07-16 15:07:57,416 - agent - INFO - rag_service.py:49 - [rag_summarize] 检索到 3 条相关文档。
+ 内容如下：【参考资料1】:
+扫地/扫拖一体机器人选购指南200条
+
+1. 选购核心：优先明确使用场景，独居小户型侧重轻便灵活，多口之家带宠物需强化吸力和防缠绕功能。
+
+2. 吸力参数：家用建议选择≥3000Pa吸力机型，地毯场景需≥4000Pa，吸力可调节更适配不同地面。
+
+3. 导航技术：激光导航定位精准、抗干扰强，适合复杂户型；视觉导航性价比高，避免强光环境使用。
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/选购指南.txt'}
+
+【参考资料2】:
+71. **租房党、小户型适合什么清扫模式？**
+- 开启“一键清扫”或“迷你清扫”模式，设置定时清扫，每天短时间清扫，保证地面干净。
+72. **机器人可以清理宠物猫砂、狗砂吗？**
+- 可清理轻微散落的猫砂、狗砂，调至大吸力模式，避免大颗粒猫砂卡入滚刷，及时清理尘盒。
+73. **厨房地面有油污怎么清理？**
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/扫地机器人100问2.txt'}
+
+【参考资料3】:
+11. 机身高度：床底/沙发底高度≤8cm，需选机身高度≤7.5cm机型，避免无法进入清扫死角。
+
+12. 越障能力：门槛高度≤2cm选越障≥2cm机型，地毯场景需强化驱动轮动力，避免卡困。
+
+13. 过滤系统：HEPA滤网等级≥H13可过滤细小灰尘和过敏原，过敏体质家庭必备，注意滤网是否可水洗。
+
+14. 主刷设计：防缠绕主刷（带硅胶条）适合长发/宠物家庭，无主刷款适合短毛地毯和硬质地面。
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/选购指南.txt'}
+
+
+2026-07-16 15:07:57,418 - agent - INFO - rag_service.py:30 - [print_prompt] 当前提示词:
+text='你是专注于"基于参考资料总结"的AI助手，需结合用户提问和向量检索到的参考资料，生成简洁准确的概括回答。\n\n### 输入信息\n1. 用户提问：小户型适合哪些扫地机器人\n2. 参考资料(在下一个###之前内容均为参考资料)：【参考资料1】:\n扫地/扫拖一体机器人选购指南200条\n\n1. 选购核心：优先明确使用场景，独居小户型侧重轻便灵活，多口之家带宠物需强化吸力和防缠绕功能。\n\n2. 吸力参数：家用建议选择≥3000Pa吸力机型，地毯场景需≥4000Pa，吸力可调节更适配不同地面。\n\n3. 导航技术：激光导航定位精准、抗干扰强，适合复杂户型；视觉导航性价比高，避免强光环境使用。\n | 参考元数据: {\'source\': \'/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/选购指南.txt\'}\n\n【参考资料2】:\n71. **租房党、小户型适合什么清扫模式？**\n- 开启“一键清扫”或“迷你清扫”模式，设置定时清扫，每天短时间清扫，保证地面干净。\n72. **机器人可以清理宠物猫砂、狗砂吗？**\n- 可清理轻微散落的猫砂、狗砂，调至大吸力模式，避免大颗粒猫砂卡入滚刷，及时清理尘盒。\n73. **厨房地面有油污怎么清理？**\n | 参考元数据: {\'source\': \'/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/扫地机器人100问2.txt\'}\n\n【参考资料3】:\n11. 机身高度：床底/沙发底高度≤8cm，需选机身高度≤7.5cm机型，避免无法进入清扫死角。\n\n12. 越障能力：门槛高度≤2cm选越障≥2cm机型，地毯场景需强化驱动轮动力，避免卡困。\n\n13. 过滤系统：HEPA滤网等级≥H13可过滤细小灰尘和过敏原，过敏体质家庭必备，注意滤网是否可水洗。\n\n14. 主刷设计：防缠绕主刷（带硅胶条）适合长发/宠物家庭，无主刷款适合短毛地毯和硬质地面。\n | 参考元数据: {\'source\': \'/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/选购指南.txt\'}\n\n\n\n### 严格遵守以下约束（违反将导致回答无效）\n1. 内容合规：禁止包含违法、侵权、攻击性信息；\n2. 事实准确：回答必须完全基于参考资料中的信息，不编造、不添加未提及的内容，不做主观推断；\n3. 语言要求：仅用中文回答，语气客观、简洁，不冗余；\n4. 聚焦提问：严格围绕用户原始提问总结，不扩充问题范围、不额外追问、不构造新query；\n5. 格式要求：仅输出概括内容本身，以纯文本字符串形式呈现，不封装为字典、列表、JSON等任何结构，不附带额外说明。\n'
+2026-07-16 16:35:31,313 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有1条消息记录。
+2026-07-16 16:35:31,314 - agent - DEBUG - middleware.py:40 - [log_before_model] HumanMessage | 扫地机器人在我所在的地区的气温下如何保养？
+2026-07-16 16:35:33,365 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: get_user_location
+2026-07-16 16:35:33,366 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {}
+2026-07-16 16:35:33,367 - agent - INFO - middleware.py:22 - [tool monitor] 工具get_user_location调用成功: content='上海' name='get_user_location' tool_call_id='call_69697b6a355a48cabb1ccbf0'
+2026-07-16 16:35:33,367 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有3条消息记录。
+2026-07-16 16:35:33,367 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | 上海
+2026-07-16 16:35:34,683 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: get_weather
+2026-07-16 16:35:34,684 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {'city': '上海'}
+2026-07-16 16:35:34,685 - agent - INFO - middleware.py:22 - [tool monitor] 工具get_weather调用成功: content='上海的天气是晴天，温度25摄氏度。' name='get_weather' tool_call_id='call_2f8f736e73dc46da871babce'
+2026-07-16 16:35:34,686 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有5条消息记录。
+2026-07-16 16:35:34,686 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | 上海的天气是晴天，温度25摄氏度。
+2026-07-16 16:35:36,747 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: rag_summarize
+2026-07-16 16:35:36,747 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {'question': '扫地机器人在25摄氏度晴天环境下如何保养'}
+2026-07-16 16:35:37,036 - agent - INFO - rag_service.py:49 - [rag_summarize] 检索到 3 条相关文档。
+ 内容如下：【参考资料1】:
+# 扫地机器人+扫拖一体机器人 维护保养200条（纯保养维度，分通用基础/扫地专属/扫拖一体拖地专属/耗材专项/环境适配/长期存放/故障预防，覆盖全机型日常维护）
+## 通用基础维护（50条）
+1. 每日使用后，用干软布擦拭机器人机身外壳，去除灰尘、水渍，避免污渍附着硬化。
+2. 每次清扫完成，及时清理机身防撞条缝隙的毛发、线头，防止卡扣卡顿影响回弹。
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt'}
+
+【参考资料2】:
+4. 短毛地毯环境：使用地毯增压功能后，检查主刷是否复位，每周清理地毯边缘的灰尘，避免机器人漏扫。
+5. 水泥地/老旧地砖环境：清扫后立即清理机身底部、轮组的泥沙，防止磨损配件，减少拖地频次，避免灰尘结块。
+6. 宠物家庭：每次清扫后全面清理主刷、尘盒、拖布，每周对机器人进行除味消毒，耗材更换周期缩短50%。
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt'}
+
+【参考资料3】:
+13. 阳台封闭环境：拖地后及时开窗通风，清理机器人轮组的泥沙，避免阳台灰尘与水渍混合。
+14. 复式/多层楼层：为每层楼单独建图，更换楼层使用前，清理机器人底部、传感器，校准扫拖参数。
+15. 有镜面/玻璃家具的环境：清扫前清理机器人避障传感器，避免反光导致建图错乱，每周擦拭传感器。
+16. 家具底部低矮环境：机器人进入后，手动辅助清理死角，每周清理机器人底部传感器，避免灰尘遮挡。
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt'}
+
+
+2026-07-16 16:35:37,037 - agent - INFO - rag_service.py:30 - [print_prompt] 当前提示词:
+text='你是专注于"基于参考资料总结"的AI助手，需结合用户提问和向量检索到的参考资料，生成简洁准确的概括回答。\n\n### 输入信息\n1. 用户提问：扫地机器人在25摄氏度晴天环境下如何保养\n2. 参考资料(在下一个###之前内容均为参考资料)：【参考资料1】:\n# 扫地机器人+扫拖一体机器人 维护保养200条（纯保养维度，分通用基础/扫地专属/扫拖一体拖地专属/耗材专项/环境适配/长期存放/故障预防，覆盖全机型日常维护）\n## 通用基础维护（50条）\n1. 每日使用后，用干软布擦拭机器人机身外壳，去除灰尘、水渍，避免污渍附着硬化。\n2. 每次清扫完成，及时清理机身防撞条缝隙的毛发、线头，防止卡扣卡顿影响回弹。\n | 参考元数据: {\'source\': \'/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt\'}\n\n【参考资料2】:\n4. 短毛地毯环境：使用地毯增压功能后，检查主刷是否复位，每周清理地毯边缘的灰尘，避免机器人漏扫。\n5. 水泥地/老旧地砖环境：清扫后立即清理机身底部、轮组的泥沙，防止磨损配件，减少拖地频次，避免灰尘结块。\n6. 宠物家庭：每次清扫后全面清理主刷、尘盒、拖布，每周对机器人进行除味消毒，耗材更换周期缩短50%。\n | 参考元数据: {\'source\': \'/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt\'}\n\n【参考资料3】:\n13. 阳台封闭环境：拖地后及时开窗通风，清理机器人轮组的泥沙，避免阳台灰尘与水渍混合。\n14. 复式/多层楼层：为每层楼单独建图，更换楼层使用前，清理机器人底部、传感器，校准扫拖参数。\n15. 有镜面/玻璃家具的环境：清扫前清理机器人避障传感器，避免反光导致建图错乱，每周擦拭传感器。\n16. 家具底部低矮环境：机器人进入后，手动辅助清理死角，每周清理机器人底部传感器，避免灰尘遮挡。\n | 参考元数据: {\'source\': \'/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt\'}\n\n\n\n### 严格遵守以下约束（违反将导致回答无效）\n1. 内容合规：禁止包含违法、侵权、攻击性信息；\n2. 事实准确：回答必须完全基于参考资料中的信息，不编造、不添加未提及的内容，不做主观推断；\n3. 语言要求：仅用中文回答，语气客观、简洁，不冗余；\n4. 聚焦提问：严格围绕用户原始提问总结，不扩充问题范围、不额外追问、不构造新query；\n5. 格式要求：仅输出概括内容本身，以纯文本字符串形式呈现，不封装为字典、列表、JSON等任何结构，不附带额外说明。\n'
+2026-07-16 16:35:39,217 - agent - INFO - middleware.py:22 - [tool monitor] 工具rag_summarize调用成功: content='在25摄氏度晴天环境下，扫地机器人使用后应及时用干软布擦拭机身外壳，清理防撞条缝隙中的毛发和线头；若在阳台等易积尘区域使用，需清理轮组泥沙，并保持通风；同时定期清洁底部和传感器，避免灰尘遮挡影响性能。' name='rag_summarize' tool_call_id='call_81223fc46a08452aa0be78cd'
+2026-07-16 16:35:39,218 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有7条消息记录。
+2026-07-16 16:35:39,218 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | 在25摄氏度晴天环境下，扫地机器人使用后应及时用干软布擦拭机身外壳，清理防撞条缝隙中的毛发和线头；若在阳台等易积尘区域使用，需清理轮组泥沙，并保持通风；同时定期清洁底部和传感器，避免灰尘遮挡影响性能。
+2026-07-16 16:53:23,492 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有1条消息记录。
+2026-07-16 16:53:23,494 - agent - DEBUG - middleware.py:40 - [log_before_model] HumanMessage | 给我生成我的使用报告
+2026-07-16 16:53:25,014 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: get_user_id
+2026-07-16 16:53:25,015 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {}
+2026-07-16 16:53:25,016 - agent - INFO - middleware.py:22 - [tool monitor] 工具get_user_id调用成功: content='1005' name='get_user_id' tool_call_id='call_d9626c6b04ae489da3420a82'
+2026-07-16 16:53:25,017 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有3条消息记录。
+2026-07-16 16:53:25,017 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | 1005
+2026-07-16 16:53:26,158 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: get_current_month
+2026-07-16 16:53:26,158 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {}
+2026-07-16 16:53:26,158 - agent - INFO - middleware.py:22 - [tool monitor] 工具get_current_month调用成功: content='7' name='get_current_month' tool_call_id='call_a52df691b34145768d2c6e7d'
+2026-07-16 16:53:26,159 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有5条消息记录。
+2026-07-16 16:53:26,159 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | 7
+2026-07-16 16:53:27,680 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: get_current_month
+2026-07-16 16:53:27,680 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {}
+2026-07-16 16:53:27,681 - agent - INFO - middleware.py:22 - [tool monitor] 工具get_current_month调用成功: content='7' name='get_current_month' tool_call_id='call_6e8d1313084b454c843e91d5'
+2026-07-16 16:53:27,682 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有7条消息记录。
+2026-07-16 16:53:27,682 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | 7
+2026-07-16 16:53:29,838 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: fill_context_for_report
+2026-07-16 16:53:29,838 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {}
+2026-07-16 16:53:29,839 - agent - INFO - middleware.py:22 - [tool monitor] 工具fill_context_for_report调用成功: content='fill_context_for_report已调用' name='fill_context_for_report' tool_call_id='call_87cc447a6ba641e091c78144'
+2026-07-16 16:53:29,840 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有9条消息记录。
+2026-07-16 16:53:29,840 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | fill_context_for_report已调用
+2026-07-16 16:53:31,830 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: fetch_external_data
+2026-07-16 16:53:31,830 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {'user_id': '1005'}
+2026-07-16 16:53:31,832 - agent - INFO - middleware.py:22 - [tool monitor] 工具fetch_external_data调用成功: content="Error invoking tool 'fetch_external_data' with kwargs {'user_id': '1005'} with error:\n month: Field required\n Please fix the error and try again." name='fetch_external_data' tool_call_id='call_3a5896b6c8cb4228b7bbec1e' status='error'
+2026-07-16 16:53:31,833 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有11条消息记录。
+2026-07-16 16:53:31,833 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | Error invoking tool 'fetch_external_data' with kwargs {'user_id': '1005'} with error:
+ month: Field required
+ Please fix the error and try again.
+2026-07-16 16:59:18,773 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有1条消息记录。
+2026-07-16 16:59:18,774 - agent - DEBUG - middleware.py:40 - [log_before_model] HumanMessage | 给我生成我的使用报告
+2026-07-16 16:59:19,548 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: fill_context_for_report
+2026-07-16 16:59:19,548 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {}
+2026-07-16 16:59:19,549 - agent - INFO - middleware.py:22 - [tool monitor] 工具fill_context_for_report调用成功: content='fill_context_for_report已调用' name='fill_context_for_report' tool_call_id='call_a655f0ef813a4a5b96c1bd84'
+2026-07-16 16:59:19,550 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有3条消息记录。
+2026-07-16 16:59:19,550 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | fill_context_for_report已调用
+2026-07-16 16:59:20,452 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: get_user_id
+2026-07-16 16:59:20,452 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {}
+2026-07-16 16:59:20,454 - agent - INFO - middleware.py:22 - [tool monitor] 工具get_user_id调用成功: content='1002' name='get_user_id' tool_call_id='call_745d1038775d43a7a70e4326'
+2026-07-16 16:59:20,455 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有5条消息记录。
+2026-07-16 16:59:20,455 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | 1002
+2026-07-16 16:59:21,356 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: get_current_month
+2026-07-16 16:59:21,357 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {}
+2026-07-16 16:59:21,357 - agent - INFO - middleware.py:22 - [tool monitor] 工具get_current_month调用成功: content='2025-11' name='get_current_month' tool_call_id='call_2b87e104da984a45a822383e'
+2026-07-16 16:59:21,358 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有7条消息记录。
+2026-07-16 16:59:21,358 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | 2025-11
+2026-07-16 16:59:22,767 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: fetch_external_data
+2026-07-16 16:59:22,767 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {'user_id': '1002'}
+2026-07-16 16:59:22,768 - agent - INFO - middleware.py:22 - [tool monitor] 工具fetch_external_data调用成功: content="Error invoking tool 'fetch_external_data' with kwargs {'user_id': '1002'} with error:\n month: Field required\n Please fix the error and try again." name='fetch_external_data' tool_call_id='call_2b49dbaeeb874eb9a92c9d15' status='error'
+2026-07-16 16:59:22,769 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有9条消息记录。
+2026-07-16 16:59:22,769 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | Error invoking tool 'fetch_external_data' with kwargs {'user_id': '1002'} with error:
+ month: Field required
+ Please fix the error and try again.
+2026-07-16 17:01:56,082 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有1条消息记录。
+2026-07-16 17:01:56,083 - agent - DEBUG - middleware.py:40 - [log_before_model] HumanMessage | 给我生成我的使用报告
+2026-07-16 17:01:57,673 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: get_user_id
+2026-07-16 17:01:57,673 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {}
+2026-07-16 17:01:57,674 - agent - INFO - middleware.py:22 - [tool monitor] 工具get_user_id调用成功: content='1002' name='get_user_id' tool_call_id='call_9fc0ed2cdfa042f18690173e'
+2026-07-16 17:01:57,675 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有3条消息记录。
+2026-07-16 17:01:57,675 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | 1002
+2026-07-16 17:01:58,760 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: get_current_month
+2026-07-16 17:01:58,761 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {}
+2026-07-16 17:01:58,761 - agent - INFO - middleware.py:22 - [tool monitor] 工具get_current_month调用成功: content='2025-10' name='get_current_month' tool_call_id='call_4aea08b7260847b9925e3984'
+2026-07-16 17:01:58,762 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有5条消息记录。
+2026-07-16 17:01:58,762 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | 2025-10
+2026-07-16 17:02:00,168 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: fill_context_for_report
+2026-07-16 17:02:00,169 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {}
+2026-07-16 17:02:00,183 - agent - INFO - middleware.py:22 - [tool monitor] 工具fill_context_for_report调用成功: content='fill_context_for_report已调用' name='fill_context_for_report' tool_call_id='call_be7c75582cf5422c90b644bd'
+2026-07-16 17:02:00,184 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有7条消息记录。
+2026-07-16 17:02:00,184 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | fill_context_for_report已调用
+2026-07-16 17:02:02,223 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: fetch_external_data
+2026-07-16 17:02:02,223 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {'user_id': '1002', 'month': '2025-10'}
+2026-07-16 17:02:02,228 - agent - INFO - middleware.py:22 - [tool monitor] 工具fetch_external_data调用成功: content='{"特征": "70㎡公寓 | 情侣 | 瓷砖", "效率": "覆盖率:89%\\\\n避障失败:1次/周（电线缠绕）", "耗材": "边刷寿命:剩余50天\\\\n尘盒清理:每3天", "对比": "拖地功能使用率低于同类25%"}' name='fetch_external_data' tool_call_id='call_168ea7b1455545a68aa81ec9'
+2026-07-16 17:02:02,229 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有9条消息记录。
+2026-07-16 17:02:02,229 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | {"特征": "70㎡公寓 | 情侣 | 瓷砖", "效率": "覆盖率:89%\\n避障失败:1次/周（电线缠绕）", "耗材": "边刷寿命:剩余50天\\n尘盒清理:每3天", "对比": "拖地功能使用率低于同类25%"}
+2026-07-16 17:02:03,785 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: rag_summarize
+2026-07-16 17:02:03,785 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {'question': '扫地机器人边刷保养和更换周期'}
+2026-07-16 17:02:05,875 - agent - INFO - rag_service.py:49 - [rag_summarize] 检索到 3 条相关文档。
+ 内容如下：【参考资料1】:
+8. 清洁刷（自动洗拖布款）：每周清理毛发，每月用清水冲洗，3-6个月更换，出现磨损、变形立即更换。
+9. 万向轮/驱动轮：轮面磨损严重、转动卡顿或异响时更换，一般1-2年更换一次，粗糙地面6-12个月更换。
+10. 滚刷胶条（主刷配件）：出现磨损、开裂、脱落时更换，一般与主刷同步更换。
+11. 污水仓滤网（扫拖一体）：每周用清水冲洗，晾干后使用，6个月更换一次，破损立即更换。
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt'}
+
+【参考资料2】:
+15. 边刷磨损至刷毛长度＜1cm时，立即更换，避免影响边角清扫效果。
+16. 每周用软毛刷清理机器人的灰尘传感器，避免误判环境灰尘量导致吸力异常。
+17. 集尘款机器人，每周清理集尘座的出风口，无堵塞，保证集尘吸力正常。
+18. 机器人在水泥地、地砖等粗糙地面清扫后，及时清理机身底部的泥沙，防止磨损轮组。
+19. 每次清扫完成，将尘盒内的垃圾倾倒干净，避免长时间存放滋生细菌、产生异味。
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt'}
+
+【参考资料3】:
+### 耗材与维护类
+21. **主刷需要多久更换一次？**
+- 日常使用下，普通主刷3-6个月更换一次，宠物家庭1-3个月更换，出现磨损、变形立即更换。
+22. **边刷磨损后有什么影响？如何更换？**
+- 边刷磨损会导致边角清扫不彻底，拆卸机身底部边刷卡扣，直接更换新边刷，按压卡紧即可。
+23. **HEPA滤网可以清洗重复使用吗？**
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/扫地机器人100问2.txt'}
+
+
+2026-07-16 17:02:05,876 - agent - INFO - rag_service.py:30 - [print_prompt] 当前提示词:
+text='你是专注于"基于参考资料总结"的AI助手，需结合用户提问和向量检索到的参考资料，生成简洁准确的概括回答。\n\n### 输入信息\n1. 用户提问：扫地机器人边刷保养和更换周期\n2. 参考资料(在下一个###之前内容均为参考资料)：【参考资料1】:\n8. 清洁刷（自动洗拖布款）：每周清理毛发，每月用清水冲洗，3-6个月更换，出现磨损、变形立即更换。\n9. 万向轮/驱动轮：轮面磨损严重、转动卡顿或异响时更换，一般1-2年更换一次，粗糙地面6-12个月更换。\n10. 滚刷胶条（主刷配件）：出现磨损、开裂、脱落时更换，一般与主刷同步更换。\n11. 污水仓滤网（扫拖一体）：每周用清水冲洗，晾干后使用，6个月更换一次，破损立即更换。\n | 参考元数据: {\'source\': \'/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt\'}\n\n【参考资料2】:\n15. 边刷磨损至刷毛长度＜1cm时，立即更换，避免影响边角清扫效果。\n16. 每周用软毛刷清理机器人的灰尘传感器，避免误判环境灰尘量导致吸力异常。\n17. 集尘款机器人，每周清理集尘座的出风口，无堵塞，保证集尘吸力正常。\n18. 机器人在水泥地、地砖等粗糙地面清扫后，及时清理机身底部的泥沙，防止磨损轮组。\n19. 每次清扫完成，将尘盒内的垃圾倾倒干净，避免长时间存放滋生细菌、产生异味。\n | 参考元数据: {\'source\': \'/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt\'}\n\n【参考资料3】:\n### 耗材与维护类\n21. **主刷需要多久更换一次？**\n- 日常使用下，普通主刷3-6个月更换一次，宠物家庭1-3个月更换，出现磨损、变形立即更换。\n22. **边刷磨损后有什么影响？如何更换？**\n- 边刷磨损会导致边角清扫不彻底，拆卸机身底部边刷卡扣，直接更换新边刷，按压卡紧即可。\n23. **HEPA滤网可以清洗重复使用吗？**\n | 参考元数据: {\'source\': \'/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/扫地机器人100问2.txt\'}\n\n\n\n### 严格遵守以下约束（违反将导致回答无效）\n1. 内容合规：禁止包含违法、侵权、攻击性信息；\n2. 事实准确：回答必须完全基于参考资料中的信息，不编造、不添加未提及的内容，不做主观推断；\n3. 语言要求：仅用中文回答，语气客观、简洁，不冗余；\n4. 聚焦提问：严格围绕用户原始提问总结，不扩充问题范围、不额外追问、不构造新query；\n5. 格式要求：仅输出概括内容本身，以纯文本字符串形式呈现，不封装为字典、列表、JSON等任何结构，不附带额外说明。\n'
+2026-07-16 17:02:07,205 - agent - INFO - middleware.py:22 - [tool monitor] 工具rag_summarize调用成功: content='边刷应每周清理灰尘，当刷毛长度小于1厘米或出现磨损时立即更换，以确保边角清扫效果；正常情况下建议每3-6个月更换一次。' name='rag_summarize' tool_call_id='call_9024f280cb124e53ba18c3d1'
+2026-07-16 17:02:07,206 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有11条消息记录。
+2026-07-16 17:02:07,206 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | 边刷应每周清理灰尘，当刷毛长度小于1厘米或出现磨损时立即更换，以确保边角清扫效果；正常情况下建议每3-6个月更换一次。
+2026-07-16 17:02:08,609 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: rag_summarize
+2026-07-16 17:02:08,609 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {'question': '扫地机器人避障失败常见原因及解决方案'}
+2026-07-16 17:02:08,823 - agent - INFO - rag_service.py:49 - [rag_summarize] 检索到 3 条相关文档。
+ 内容如下：【参考资料1】:
+5. 故障现象：机器人清扫时频繁碰撞家具；检测：避障摄像头/传感器是否有灰尘、水渍，防撞条是否卡顿；修复：用干布擦拭避障组件，轻按防撞条确认回弹正常，清理周围障碍物。
+
+6. 故障现象：机器人不移动或移动缓慢；检测：驱动轮、万向轮是否缠绕毛发、杂物，轮组是否卡顿，地面是否过滑；修复：清理轮组缠绕物，滴少量专用润滑油，更换干燥地面测试。
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/故障排除.txt'}
+
+【参考资料2】:
+### 功能专项类
+51. **防跌落功能失效怎么办？**
+- 擦拭底部防跌落传感器，检查传感器是否被遮挡，将机器人放在平整地面，重启设备校准传感器。
+52. **避障功能变差，经常碰撞家具怎么解决？**
+- 清理机身前方避障摄像头和传感器，避免灰尘、水渍遮挡，在APP中开启“高级避障模式”，重新建图。
+53. **地毯增压功能不工作怎么处理？**
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/扫地机器人100问2.txt'}
+
+【参考资料3】:
+13. 故障现象：建图不完整、地图错乱；检测：环境是否有反光物，移动障碍物是否过多，传感器是否异常；修复：遮挡反光物，清理移动障碍物，删除旧地图重新建图。
+
+14. 故障现象：机器人清扫时频繁暂停；检测：尘盒是否满溢，电量是否不足，传感器是否被遮挡；修复：清理尘盒，充满电，擦拭传感器表面灰尘。
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/故障排除.txt'}
+
+
+2026-07-16 17:02:08,826 - agent - INFO - rag_service.py:30 - [print_prompt] 当前提示词:
+text='你是专注于"基于参考资料总结"的AI助手，需结合用户提问和向量检索到的参考资料，生成简洁准确的概括回答。\n\n### 输入信息\n1. 用户提问：扫地机器人避障失败常见原因及解决方案\n2. 参考资料(在下一个###之前内容均为参考资料)：【参考资料1】:\n5. 故障现象：机器人清扫时频繁碰撞家具；检测：避障摄像头/传感器是否有灰尘、水渍，防撞条是否卡顿；修复：用干布擦拭避障组件，轻按防撞条确认回弹正常，清理周围障碍物。\n\n6. 故障现象：机器人不移动或移动缓慢；检测：驱动轮、万向轮是否缠绕毛发、杂物，轮组是否卡顿，地面是否过滑；修复：清理轮组缠绕物，滴少量专用润滑油，更换干燥地面测试。\n | 参考元数据: {\'source\': \'/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/故障排除.txt\'}\n\n【参考资料2】:\n### 功能专项类\n51. **防跌落功能失效怎么办？**\n- 擦拭底部防跌落传感器，检查传感器是否被遮挡，将机器人放在平整地面，重启设备校准传感器。\n52. **避障功能变差，经常碰撞家具怎么解决？**\n- 清理机身前方避障摄像头和传感器，避免灰尘、水渍遮挡，在APP中开启“高级避障模式”，重新建图。\n53. **地毯增压功能不工作怎么处理？**\n | 参考元数据: {\'source\': \'/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/扫地机器人100问2.txt\'}\n\n【参考资料3】:\n13. 故障现象：建图不完整、地图错乱；检测：环境是否有反光物，移动障碍物是否过多，传感器是否异常；修复：遮挡反光物，清理移动障碍物，删除旧地图重新建图。\n\n14. 故障现象：机器人清扫时频繁暂停；检测：尘盒是否满溢，电量是否不足，传感器是否被遮挡；修复：清理尘盒，充满电，擦拭传感器表面灰尘。\n | 参考元数据: {\'source\': \'/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/故障排除.txt\'}\n\n\n\n### 严格遵守以下约束（违反将导致回答无效）\n1. 内容合规：禁止包含违法、侵权、攻击性信息；\n2. 事实准确：回答必须完全基于参考资料中的信息，不编造、不添加未提及的内容，不做主观推断；\n3. 语言要求：仅用中文回答，语气客观、简洁，不冗余；\n4. 聚焦提问：严格围绕用户原始提问总结，不扩充问题范围、不额外追问、不构造新query；\n5. 格式要求：仅输出概括内容本身，以纯文本字符串形式呈现，不封装为字典、列表、JSON等任何结构，不附带额外说明。\n'
+2026-07-16 17:02:10,928 - agent - INFO - middleware.py:22 - [tool monitor] 工具rag_summarize调用成功: content='扫地机器人避障失败的常见原因包括避障摄像头或传感器被灰尘、水渍遮挡，防撞条卡顿，或未开启高级避障模式。解决方案为用干布擦拭避障组件，轻按防撞条确认回弹正常，清理周围障碍物，并在APP中开启“高级避障模式”及重新建图。' name='rag_summarize' tool_call_id='call_5d326b59050b493984bb904a'
+2026-07-16 17:02:10,933 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有13条消息记录。
+2026-07-16 17:02:10,933 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | 扫地机器人避障失败的常见原因包括避障摄像头或传感器被灰尘、水渍遮挡，防撞条卡顿，或未开启高级避障模式。解决方案为用干布擦拭避障组件，轻按防撞条确认回弹正常，清理周围障碍物，并在APP中开启“高级避障模式”及重新建图。
+2026-07-16 17:02:12,309 - agent - INFO - middleware.py:18 - [tool monitor] 工具调用请求: rag_summarize
+2026-07-16 17:02:12,310 - agent - INFO - middleware.py:19 - [tool monitor] 工具调用参数: {'question': '扫拖机器人拖地功能使用建议'}
+2026-07-16 17:02:12,536 - agent - INFO - rag_service.py:49 - [rag_summarize] 检索到 3 条相关文档。
+ 内容如下：【参考资料1】:
+10. 北方干燥/多灰环境：增大吸力档位，每日清理尘盒，每月对风道、滤网进行深度清洁，拖地时调至中档出水量。
+11. 厨房重油污环境：拖地后立即清理拖布、水箱，用中性洗涤剂清洗拖布，每周对水箱进行除垢，避免油污堵塞。
+12. 卫生间环境：仅进行扫地，不拖地，防止机器人接触积水，清理后擦拭机身底部，确保无水渍。
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt'}
+
+【参考资料2】:
+7. 有婴儿/小孩的家庭：拖地仅用清水，避免添加清洁液，拖布每次使用后高温消毒，机器人机身每日擦拭。
+8. 多尘/风沙大的环境：每日清理尘盒、滤网，每周更换边刷，关闭拖地功能，防止灰尘与水渍混合结块。
+9. 南方回南天/潮湿环境：减少拖地频次，使用干拖模式，机器人机身、耗材每日晾干，每周对机器人进行除湿处理。
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt'}
+
+【参考资料3】:
+## 环境适配维护（20条）
+1. 木地板环境：拖地时调至低档出水量，使用干拖模式，避免地面积水，每周对机器人轮组进行除尘，防止泥沙磨损地板。
+2. 瓷砖/大理石环境：拖地后及时清理机器人底部水渍，每月对拖布支架进行除垢，防止水垢附着。
+3. 长毛地毯环境：清扫后立即清理主刷、边刷上的地毯纤维，关闭拖地功能，防止拖布浸湿地毯导致发霉。
+ | 参考元数据: {'source': '/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt'}
+
+
+2026-07-16 17:02:12,538 - agent - INFO - rag_service.py:30 - [print_prompt] 当前提示词:
+text='你是专注于"基于参考资料总结"的AI助手，需结合用户提问和向量检索到的参考资料，生成简洁准确的概括回答。\n\n### 输入信息\n1. 用户提问：扫拖机器人拖地功能使用建议\n2. 参考资料(在下一个###之前内容均为参考资料)：【参考资料1】:\n10. 北方干燥/多灰环境：增大吸力档位，每日清理尘盒，每月对风道、滤网进行深度清洁，拖地时调至中档出水量。\n11. 厨房重油污环境：拖地后立即清理拖布、水箱，用中性洗涤剂清洗拖布，每周对水箱进行除垢，避免油污堵塞。\n12. 卫生间环境：仅进行扫地，不拖地，防止机器人接触积水，清理后擦拭机身底部，确保无水渍。\n | 参考元数据: {\'source\': \'/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt\'}\n\n【参考资料2】:\n7. 有婴儿/小孩的家庭：拖地仅用清水，避免添加清洁液，拖布每次使用后高温消毒，机器人机身每日擦拭。\n8. 多尘/风沙大的环境：每日清理尘盒、滤网，每周更换边刷，关闭拖地功能，防止灰尘与水渍混合结块。\n9. 南方回南天/潮湿环境：减少拖地频次，使用干拖模式，机器人机身、耗材每日晾干，每周对机器人进行除湿处理。\n | 参考元数据: {\'source\': \'/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt\'}\n\n【参考资料3】:\n## 环境适配维护（20条）\n1. 木地板环境：拖地时调至低档出水量，使用干拖模式，避免地面积水，每周对机器人轮组进行除尘，防止泥沙磨损地板。\n2. 瓷砖/大理石环境：拖地后及时清理机器人底部水渍，每月对拖布支架进行除垢，防止水垢附着。\n3. 长毛地毯环境：清扫后立即清理主刷、边刷上的地毯纤维，关闭拖地功能，防止拖布浸湿地毯导致发霉。\n | 参考元数据: {\'source\': \'/Users/ikun/Documents/code/Projects/求职项目学习之路/AI-Agent/黑马LangChain/05_大模型RAG与Agent开发项目/data/维护保养.txt\'}\n\n\n\n### 严格遵守以下约束（违反将导致回答无效）\n1. 内容合规：禁止包含违法、侵权、攻击性信息；\n2. 事实准确：回答必须完全基于参考资料中的信息，不编造、不添加未提及的内容，不做主观推断；\n3. 语言要求：仅用中文回答，语气客观、简洁，不冗余；\n4. 聚焦提问：严格围绕用户原始提问总结，不扩充问题范围、不额外追问、不构造新query；\n5. 格式要求：仅输出概括内容本身，以纯文本字符串形式呈现，不封装为字典、列表、JSON等任何结构，不附带额外说明。\n'
+2026-07-16 17:02:17,337 - agent - INFO - middleware.py:22 - [tool monitor] 工具rag_summarize调用成功: content='根据不同环境使用扫拖机器人拖地功能的建议如下：  \n- 北方干燥或多灰环境：拖地时调至中档出水量。  \n- 厨房重油污环境：拖地后立即清理拖布和水箱，用中性洗涤剂清洗拖布，每周对水箱除垢。  \n- 卫生间环境：仅扫地，不拖地，防止接触积水。  \n- 有婴儿或小孩的家庭：拖地仅用清水，避免添加清洁液，拖布每次使用后高温消毒。  \n- 多尘或风沙大环境：关闭拖地功能，防止灰尘与水渍混合结块。  \n- 南方回南天或潮湿环境：减少拖地频次，使用干拖模式，每日晾干机身和耗材。  \n- 木地板环境：调至低档出水量，使用干拖模式，避免地面积水。  \n- 瓷砖或大理石环境：拖地后及时清理机器人底部水渍，每月对拖布支架除垢。  \n- 长毛地毯环境：关闭拖地功能，防止拖布浸湿地毯导致发霉。' name='rag_summarize' tool_call_id='call_a4678f6bee124b3183322c70'
+2026-07-16 17:02:17,338 - agent - INFO - middleware.py:39 - [log_before_model] 即将调用模型，带有15条消息记录。
+2026-07-16 17:02:17,338 - agent - DEBUG - middleware.py:40 - [log_before_model] ToolMessage | 根据不同环境使用扫拖机器人拖地功能的建议如下：  
+- 北方干燥或多灰环境：拖地时调至中档出水量。  
+- 厨房重油污环境：拖地后立即清理拖布和水箱，用中性洗涤剂清洗拖布，每周对水箱除垢。  
+- 卫生间环境：仅扫地，不拖地，防止接触积水。  
+- 有婴儿或小孩的家庭：拖地仅用清水，避免添加清洁液，拖布每次使用后高温消毒。  
+- 多尘或风沙大环境：关闭拖地功能，防止灰尘与水渍混合结块。  
+- 南方回南天或潮湿环境：减少拖地频次，使用干拖模式，每日晾干机身和耗材。  
+- 木地板环境：调至低档出水量，使用干拖模式，避免地面积水。  
+- 瓷砖或大理石环境：拖地后及时清理机器人底部水渍，每月对拖布支架除垢。  
+- 长毛地毯环境：关闭拖地功能，防止拖布浸湿地毯导致发霉。
