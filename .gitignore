@@ -9,10 +9,18 @@ AI-Agent/config.py
 # 多模态
 多模态算法工程师/01_算法基础/01_Pytorch/vgg16_method1.pth
 多模态算法工程师/01_算法基础/01_Pytorch/vgg16_method2.pth
+多模态算法工程师/01_算法基础/02_Transformer/data/training-parallel-nc-v13/news-commentary-v13.zh-en.en
+多模态算法工程师/01_算法基础/02_Transformer/data/training-parallel-nc-v13/news-commentary-v13.zh-en.zh
+多模态算法工程师/01_算法基础/02_Transformer/tokenizer/chn.model
+多模态算法工程师/01_算法基础/02_Transformer/tokenizer/chn.vocab
+多模态算法工程师/01_算法基础/02_Transformer/tokenizer/eng.model
+多模态算法工程师/01_算法基础/02_Transformer/tokenizer/eng.vocab
+多模态算法工程师/01_算法基础/02_Transformer/tokenizer/tokenize.py
 多模态算法工程师/02_transformer/data/training-parallel-nc-v13
 多模态算法工程师/02_transformer/tokenizer
 多模态算法工程师/04_SigLIP/outputs
 多模态算法工程师/04_SigLIP/dataset
+多模态算法工程师/进阶模型/QwenVL/pretrained_ckpt
 
 **__pycache__/
 
@@ -21,14 +29,5 @@ CLAUDE.md
 pre-trained-model
 AI-Agent/hello_agent/.env
 .gitignore
-
-多模态算法工程师/01_算法基础/02_Transformer/data/training-parallel-nc-v13/news-commentary-v13.zh-en.en
-多模态算法工程师/01_算法基础/02_Transformer/data/training-parallel-nc-v13/news-commentary-v13.zh-en.zh
-多模态算法工程师/01_算法基础/02_Transformer/tokenizer/chn.model
-多模态算法工程师/01_算法基础/02_Transformer/tokenizer/chn.vocab
-多模态算法工程师/01_算法基础/02_Transformer/tokenizer/eng.model
-多模态算法工程师/01_算法基础/02_Transformer/tokenizer/eng.vocab
-多模态算法工程师/01_算法基础/02_Transformer/tokenizer/tokenize.py
-
 
 面试
