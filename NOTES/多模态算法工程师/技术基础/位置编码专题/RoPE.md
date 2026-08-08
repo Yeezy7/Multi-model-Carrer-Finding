@@ -102,9 +102,9 @@ import math
 def precompute_freqs_cis(head_dim, max_len, base=10000.0):
     """预计算旋转角度表：返回 e^{i*m*theta}（复数）: [max_len, head_dim/2]"""
     # theta: 几何级数频率，[head_dim/2]
-    theta = base ** (-torch.arange(0, head_dim, 2).float() / head_dim)
-    m = torch.arange(max_len, dtype=torch.float32)           # 位置
-    freqs = torch.outer(m, theta)                            # 角度 [L, D/2]
+    theta = base ** (-torch.arange(0, head_dim, 2).float() / head_dim) # 频率
+    m = torch.arange(max_len, dtype=torch.float32)           # 每个位置
+    freqs = torch.outer(m, theta)                     # 位置 x 频率 ：角度 [L, D/2]
     # e^{i*angle} = cos + i*sin
     return torch.polar(torch.ones_like(freqs), freqs)        # [L, D/2] 复数
 
@@ -279,7 +279,198 @@ print(torch.allclose(a, b_perm, atol=1e-6))   # True（数学等价，仅布局�
 
 **面试观点**：RoPE 是"位置越远、匹配概率被调制得越随机"；ALiBi 是"位置越远、分数被罚得越多"。ALiBi 外推更省事，但长文本"远距信息读取"弱于 RoPE+插值；RoPE 与 FlashAttention 生态绑定更深，故成为主流。
 
-## 七、高频面试问答
+## 七、从 1D 到 2D/3D：多模态扩展（2D-RoPE / 3D-RoPE）
+
+> 前面讲的都是**文本 1D RoPE**（只有序列位置）。多模态模型要处理图像（2D 网格）和视频（3D 时空），RoPE 如何扩展？答案：**把隐藏维度分组，每组用不同轴的 position id 计算旋转角**——2D-RoPE 分 2 组（高、宽），3D-RoPE 分 3 组（时间、高、宽）。这就是 M-RoPE 家族（Qwen2-VL 等）的底层机制，详见 [M-RoPE.md](M-RoPE.md)。
+
+### 7.1 为什么需要 2D/3D 位置编码
+
+| 模态 | 几何维度 | 需要的位置信息 | 1D RoPE 的缺陷 |
+|------|---------|--------------|---------------|
+| 文本 | 1D 序列 | 第几个 token | 无（1D 天然够用） |
+| 图像 | 2D 网格 | 第几行、第几列 | 只能给"展平后的第几个 patch"，丢失行列结构 |
+| 视频 | 3D 时空 | 第几帧、第几行、第几列 | 完全无法表达时间先后 |
+
+**为什么"展平后的序号"不够**：一张 16×16 patch 的图展平后，patch ①（左上角）和 patch ⑯（左上角旁边）的 1D 距离是 15，但空间距离只有 1——1D 编码无法区分"上下相邻"与"左右相邻"，空间关系被扭曲。
+
+### 7.2 2D-RoPE：把维度分成两组
+
+**核心思想**：把嵌入维度 $d$ 分成两段（各 $d/2$），第一段用**高度坐标 h** 的旋转角，第二段用**宽度坐标 w** 的旋转角：
+
+$$\text{RoPE}_{2D}(x, (h, w)) = \begin{bmatrix} R_{h}(x_{[:d/2]}) \\ R_{w}(x_{[d/2:]}) \end{bmatrix}$$
+
+- 图像中第 $r$ 行第 $c$ 列的 token → position id $(h, w) = (r, c)$；
+- 文本第 $i$ 个 token → position id $(h, w) = (i, i)$（两组同频旋转，**严格退化为 1D RoPE**）；
+- 两个轴各自满足"相对位置"性质：同轴内积只依赖该轴距离差。
+
+**性质**：
+1. 行轴与列轴解耦：两个 patch 的行差和列差分别由各自的维度组承载；
+2. 旋转正交性在每个分组内保持，范数依然不变；
+3. **外推友好**：坐标是"网格内局部坐标"（最大不过 16/32 量级），远比"全序列绝对位置"（可达 100K+）小——这就是动态分辨率下 2D-RoPE 比绝对 PE 更稳的原因。
+
+### 7.3 2D-RoPE 源码实现（可运行）
+
+```python
+import torch
+import torch.nn.functional as F
+
+def apply_rotary_1d(x, ids, base=10000.0):
+    """标准 1D RoPE（HF half-split 布局）：pair j = (x[j], x[j+d/2])"""
+    d = x.shape[-1]
+    freqs = 1.0 / (base ** (torch.arange(0, d, 2, dtype=torch.float32) / d))  # d/2 对
+    theta = ids[:, None].float() * freqs[None, :].to(x.dtype)                 # [T, d/2]
+    cos, sin = theta.cos(), theta.sin()
+    cos = cos[None, :, None, :]; sin = sin[None, :, None, :]                  # [1,T,1,d/2]
+    x1, x2 = x.chunk(2, dim=-1)                                               # 实部/虚部
+    return torch.cat((x1 * cos - x2 * sin, x1 * sin + x2 * cos), dim=-1)
+
+def apply_rotary_2d(q, h_ids, w_ids, base=10000.0):
+    """
+    2D-RoPE（官方同款结构）：共享一张完整频率表（与 1D 完全相同），
+    高轴贡献前 d/4 对、宽轴贡献后 d/4 对，拼接后与 1D 全局布局一致。
+    Args:
+        q:     [B, T, H, d]，d 必须为 4 的倍数
+        h_ids: [T] 高度坐标（行）
+        w_ids: [T] 宽度坐标（列）
+    """
+    d = q.shape[-1]
+    pairs = d // 2                                  # 完整频率表对数（与 1D 同一张表）
+    freqs = 1.0 / (base ** (torch.arange(0, d, 2, dtype=torch.float32) / d))
+    p_per_axis = d // 4                             # 每轴 d/4 对
+
+    def _theta(ids, start):
+        return ids[:, None].float() * freqs[start:start + p_per_axis][None, :]
+
+    # 高轴用前 d/4 对频率，宽轴用后 d/4 对频率，拼回完整 d/2 对
+    theta = torch.cat([_theta(h_ids, 0), _theta(w_ids, p_per_axis)], dim=-1)  # [T, d/2]
+    cos, sin = theta.cos(), theta.sin()
+    cos = cos[None, :, None, :]; sin = sin[None, :, None, :]
+    x1, x2 = q.chunk(2, dim=-1)
+    return torch.cat((x1 * cos - x2 * sin, x1 * sin + x2 * cos), dim=-1)
+
+# 测试 1：4×4 图像的 16 个 patch token
+Hp = Wp = 4
+rows, cols = torch.meshgrid(torch.arange(Hp), torch.arange(Wp), indexing="ij")
+h_ids = rows.flatten()   # [0,0,0,0,1,1,1,1,...] 行坐标
+w_ids = cols.flatten()   # [0,1,2,3,0,1,...]     列坐标
+
+q = torch.randn(1, 16, 8, 16)          # [B, T, heads, d]
+q_rot = apply_rotary_2d(q, h_ids, w_ids)
+print(q_rot.shape)                     # torch.Size([1, 16, 8, 16])
+
+# 测试 2：相对位置性质——所有 token 用同一个内容向量，
+# 则相似度只由"位置位移"决定：相同位移 → 严格相等，不同位移 → 不同
+# （base 用 10 而非 10000，让旋转角更大，便于观察差异）
+x = torch.randn(1, 8, 16)                          # 一份内容 [B,H,d]
+q = x.unsqueeze(1).expand(-1, 16, -1, -1)          # 复制到 16 个 token
+q_rot = apply_rotary_2d(q, h_ids, w_ids, base=10.0)
+
+def sim(a_idx, b_idx):
+    va, vb = q_rot[:, a_idx], q_rot[:, b_idx]
+    return F.cosine_similarity(va.flatten(1), vb.flatten(1)).item()
+
+d1 = sim(0, 5)    # (0,0)→(1,1)：位移 (+1,+1)
+d2 = sim(10, 15)  # (2,2)→(3,3)：位移 (+1,+1)，应与 d1 严格相等
+d3 = sim(0, 4)    # (0,0)→(1,0)：位移 (+1,0)
+d4 = sim(0, 1)    # (0,0)→(0,1)：位移 (0,+1)
+print(f"位移(+1,+1): {d1:.6f} vs {d2:.6f}（应严格相等，只依赖相对位移）")
+print(f"位移(+1,0):  {d3:.6f} | 位移(0,+1): {d4:.6f}（应互不相同）")
+
+# 测试 3：文本退化等价——(i,i) 的 2D-RoPE == 1D-RoPE（核心性质）
+ids = torch.arange(8)
+q2 = torch.randn(1, 8, 4, 16)
+r1 = apply_rotary_1d(q2, ids)
+r2 = apply_rotary_2d(q2, ids, ids)
+print(f"文本退化等价最大误差: {(r1 - r2).abs().max().item():.2e}")  # ≈0
+```
+
+### 7.4 3D-RoPE（M-RoPE）：把维度分成三组
+
+**核心思想**：在 2D 基础上再加时间轴，三个轴**共享同一张完整频率表**（与 1D 完全相同），各轴只贡献一段频率，按 `mrope_section` 顺序拼接（例如 Qwen2-VL-7B 的 `[16, 24, 24]`，表示 d/2=64 对频率中时间轴贡献前 16 对、高轴 24 对、宽轴 24 对）：
+
+$$\text{MRoPE}(x, (t, h, w)): \quad \theta = \begin{bmatrix} t \cdot \omega_{0{:s_t}} \\ h \cdot \omega_{s_t{:s_t+s_h}} \\ w \cdot \omega_{s_t+s_h{:}} \end{bmatrix}, \quad x' = \text{Rot}(\theta, x)$$
+
+其中 $\omega$ 是完整频率表。**这个"各轴切一段、拼回完整表"的设计保证了文本 (i,i,i) 严格退化为 1D RoPE**。
+
+**三种模态的 position id 分配**：
+
+| 模态 | 时间 id t | 高度 id h | 宽度 id w |
+|------|----------|----------|----------|
+| 文本第 i 个 token | i | i | i |
+| 图像第 r 行第 c 列 | 常数（单帧） | r | c |
+| 视频第 f 帧第 r 行第 c 列 | f | r | c |
+
+**三个关键性质**：
+1. **文本严格退化**：$(i,i,i)$ 三段的 $\theta$ 拼起来恰好等于 $i \cdot \omega$ 全表 → 等价 1D RoPE（文本能力零损失）；
+2. **图像 = 单帧视频**：时间 id 固定，只剩 2D 行为；
+3. **位置 id 数值小 → 外推收益**：图像/视频 token 按局部坐标编号而非全局序列号，Qwen2-VL 16K 训练长度可外推到 80K 推理。
+
+**源码**（与官方同结构：每轴取完整频率表的一段切片，拼回全局 theta 后统一旋转；完整实现见 [M-RoPE.md](M-RoPE.md)）：
+
+```python
+def apply_rotary_3d(q, t_ids, h_ids, w_ids, section, base=10000.0):
+    """
+    3D-RoPE（M-RoPE）：三轴共享完整频率表，各取一段拼接（官方同款结构）
+    Args:
+        q:       [B, T, H, d]
+        t/h/w_ids: [T] 各轴 position id
+        section: 三元组（频率"对"数），如 [16, 24, 24]，满足 2*sum(section)=d
+    """
+    d = q.shape[-1]
+    s_t, s_h, s_w = section
+    assert 2 * (s_t + s_h + s_w) == d, "section 必须满足 2*sum(section)=d"
+
+    freqs = 1.0 / (base ** (torch.arange(0, d, 2, dtype=torch.float32) / d))  # 完整表 d/2 对
+
+    def _theta(ids, start, n):
+        return ids[:, None].float() * freqs[start:start + n][None, :]
+
+    # 时间轴贡献前 s_t 对、高轴 s_h 对、宽轴 s_w 对，拼回完整 d/2 对
+    theta = torch.cat([
+        _theta(t_ids, 0, s_t),
+        _theta(h_ids, s_t, s_h),
+        _theta(w_ids, s_t + s_h, s_w),
+    ], dim=-1)                                    # [T, d/2]，与 1D 全局布局一致
+    cos, sin = theta.cos(), theta.sin()
+    cos = cos[None, :, None, :]; sin = sin[None, :, None, :]
+    x1, x2 = q.chunk(2, dim=-1)
+    return torch.cat((x1 * cos - x2 * sin, x1 * sin + x2 * cos), dim=-1)
+
+# 测试：4 帧视频，每帧 2×2 patch，共 16 个 token（section=[2,3,3]，d=16）
+section = [2, 3, 3]
+d = 2 * sum(section)
+q = torch.randn(1, 16, 8, d)
+f_ids = torch.tensor([0,0,0,0, 1,1,1,1, 2,2,2,2, 3,3,3,3])  # 帧 id
+h_ids = torch.tensor([0,0,1,1]*4)                             # 行
+w_ids = torch.tensor([0,1,0,1]*4)                             # 列
+q_rot = apply_rotary_3d(q, f_ids, h_ids, w_ids, section)
+print(q_rot.shape)   # torch.Size([1, 16, 8, 16])
+
+# 文本退化等价：(i,i,i) 的 3D-RoPE == 1D-RoPE
+ids = torch.arange(16)
+q3 = torch.randn(1, 16, 4, 16)
+r3 = apply_rotary_3d(q3, ids, ids, ids, section)
+r1 = apply_rotary_1d(q3, ids)
+print(f"3D 文本退化等价最大误差: {(r1 - r3).abs().max().item():.2e}")  # ≈0
+```
+
+### 7.5 1D / 2D / 3D RoPE 对比总表
+
+| 维度 | 1D-RoPE | 2D-RoPE | 3D-RoPE（M-RoPE） |
+|------|---------|---------|------------------|
+| 轴数 | 1（序列） | 2（高、宽） | 3（时间、高、宽） |
+| 维度分组 | 不分组 | 2 组（各 d/2） | 3 组（mrope_section 配置） |
+| 文本 position id | i | (i, i) | (i, i, i) |
+| 图像 position id | 展平序号 | (行, 列) | (常数, 行, 列) |
+| 视频 position id | 不支持 | 不支持 | (帧, 行, 列) |
+| 文本退化等价 | — | 严格等价 1D | 严格等价 1D |
+| 相对位置 | 序列距离 | 行差/列差 | 帧差/行差/列差 |
+| 代表模型 | LLaMA、Qwen3 文本 | Qwen2-VL/InternVL 的 ViT | Qwen2-VL/2.5-VL/3-VL LLM 侧 |
+| 外推特点 | 相位 OOD | 坐标局部、较稳 | 坐标局部、16K 训 80K 用 |
+
+**面试记忆点**：2D/3D 不是新的位置编码，而是"**把同一个 RoPE 机制按轴分组重复使用**"——维度切给几个轴，就用几组旋转角。文本永远退化为 1D，所以纯文本能力不受影响。
+
+## 八、高频面试问答
 
 **Q1：RoPE 一句话原理？**
 把 q/k 每对相邻维度看成二维平面上的点，位置 $m$ 把它们各自旋转 $m\theta_i$（复数视角即乘以 $e^{im\theta_i}$）；利用旋转矩阵正交性与可合性，内积 $\langle R_m q, R_n k\rangle = q^\top R_{n-m}k$ 只依赖相对距离——零参数、严格相对位置。
@@ -305,7 +496,16 @@ $(a+ib)e^{i\theta} = (a\cos\theta - b\sin\theta) + i(a\sin\theta + b\cos\theta)$
 **Q8：实际部署中 RoPE 如何与 FlashAttention 结合？**
 位置频率表预计算为 cos/sin，前向把 q/k 旋转完再进 FA kernel（旋转是内存受限的轻量算子，FlashAttention 官方已把 RoPE 融入 kernel）。LLaMA 系推理引擎（vLLM、TensorRT-LLM）均有融合实现。
 
-## 八、自我检验
+**Q9：2D-RoPE 和 1D-RoPE 的关系？**
+2D-RoPE 把隐藏维度分成两组，分别用 (行, 列) 坐标旋转；文本 token 用 (i, i) 时两组同频，严格退化为 1D-RoPE。图像场景下它能区分"上下相邻"与"左右相邻"，而展平的 1D 序号无法做到。
+
+**Q10：为什么 Qwen2-VL 的 ViT 要用 2D-RoPE 而不是绝对位置编码？**
+动态分辨率输入下 token 网格数量可变（从 4 到 16384），绝对 PE 的固定网格假设失效；2D-RoPE 用"网格内局部坐标"旋转，坐标值域小（行/列不超过几十），对任意分辨率输入都稳定，且零参数。这是动态分辨率能成立的位置编码前提。
+
+**Q11：M-RoPE 的 (t,h,w) 三个轴是怎么分配的？**
+隐藏维度按 mrope_section（如 Qwen2-VL 的 [16,24,24]，共 128 维）切成三段：前 16 维对（32 维）用时间 id 旋转、中间 24 对用高度、后 24 对用宽度。文本 (i,i,i) 退化 1D；图像时间轴固定为常数；视频用帧号。详细推导见 M-RoPE.md。
+
+## 九、自我检验
 
 - [ ] 能写出 $R(\theta)$ 旋转矩阵与 $f_q(x,m) = R_m x$ 的定义
 - [ ] 能写出复数表示 $z \to z e^{im\theta_i}$ 并说明与旋转矩阵同构
@@ -315,4 +515,8 @@ $(a+ib)e^{i\theta} = (a\cos\theta - b\sin\theta) + i(a\sin\theta + b\cos\theta)$
 - [ ] 能说明 HF 官方实现（cos/sin 表 + rotate_half）与复数乘法的等价性
 - [ ] 能解释 RoPE 外推崩溃的机制（相位 OOD）
 - [ ] 能对比 RoPE vs 绝对编码 vs ALiBi 的机制与适用场景
-- [ ] 能回答 8 个面试追问
+- [ ] 能讲清 2D-RoPE 的维度分组思想与文本退化等价性
+- [ ] 能写出 2D-RoPE 的手写实现（双轴 position ids + 分组旋转）
+- [ ] 能讲清 3D-RoPE（M-RoPE）的三轴分配规则与 mrope_section 含义
+- [ ] 能解释"坐标局部 → 位置 id 小 → 利于外推"的链路
+- [ ] 能回答 11 个面试追问
