@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # Qwen3-VL（第四代，2025）：MoE + 双思维 + Interleaved-MRoPE + DeepStack + 1M 上下文
 
 > 本笔记覆盖 Qwen3-VL 的完整技术剖析（论文 2511.21631，2025 年发布）。这一代是系列中架构改动最大的一代：LLM 底座升级为密集 + MoE 混合家族、视觉塔换成 SigLIP-2 架构（约 400M，**不是流传的 6B**）、位置编码升级为 Interleaved-MRoPE、引入 DeepStack 多级特征注入与文本时间戳、上下文拉满 256K 原生（可扩 1M）、并标配 Thinking/Non-Thinking 双思维模式。面试被问"MoE 怎么部署""Interleaved-MRoPE 是什么""DeepStack 为什么不涨 token""为什么放弃时间 id"时，本篇是完整答案。

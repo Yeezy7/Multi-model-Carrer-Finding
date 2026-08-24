@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # 主流 MoE 模型对比：从 GShard 到 Qwen3
 
 > 本模块索引见 [MoE详解](MoE详解.md)

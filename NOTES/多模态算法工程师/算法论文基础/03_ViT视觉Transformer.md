@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # ViT 视觉 Transformer：图像如何变成 Token
 
 ## 一、为什么需要 ViT

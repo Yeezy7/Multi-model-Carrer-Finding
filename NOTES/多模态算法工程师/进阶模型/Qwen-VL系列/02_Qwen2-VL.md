@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # Qwen2-VL 第二代（2024）：动态分辨率 + M-RoPE + 4× 压缩
 
 > 本笔记是 Qwen-VL 系列的第二篇，聚焦第二代 Qwen2-VL（2024.08/09，论文 2409.12191）。这是**全系列最重要的一代**：Naive Dynamic Resolution（朴素动态分辨率）和 M-RoPE（3D 位置编码）两个创新奠定了后两代的基础，几乎所有 Qwen 系面试题都从这里出。第一代见本目录 `01_Qwen-VL.md`。

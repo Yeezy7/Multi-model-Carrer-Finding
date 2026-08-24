@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # FlashAttention：IO 感知的分块注意力
 
 > 本模块索引见 [注意力机制专题详解](注意力机制专题详解.md)

@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # RoPE：旋转位置编码（Rotary Position Embedding）
 
 > 本模块索引见 [位置编码专题详解](位置编码专题详解.md)

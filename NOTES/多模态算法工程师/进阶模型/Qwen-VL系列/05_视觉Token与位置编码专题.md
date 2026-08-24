@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # Qwen-VL 系列：视觉 Token 与位置编码专题
 
 > 本笔记是 Qwen-VL 系列技术专题的第一篇，聚焦"图像如何变成 LLM 能读的 token 序列"与"位置信息如何在 3D 世界（时间×高×宽）里编码"两条主线。全篇纯理论，所有数字以《09_QwenVL.md》为基准：token 公式 $N=H'\cdot W'/784$、28 对齐单位、sub-image 上限 448²、`max_pixels = 16384×28×28`、M-RoPE 的 $(t,h,w)$ 与 `mrope_section=[16,24,24]`、16K 训练外推 80K 等。面试被问"视觉 token 怎么算""28 从哪来""M-RoPE 为什么能外推"时，本笔记是完整答案。

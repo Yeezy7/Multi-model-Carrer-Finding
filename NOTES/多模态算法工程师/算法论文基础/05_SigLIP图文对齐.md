@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # SigLIP 图文对齐：Sigmoid Loss 的完整数学与工程剖析
 
 > 本笔记是全系列最详细的一篇。SigLIP（Sigmoid Loss for Language-Image Pre-training）由 Google 于 2023 年提出（ICCV 2023），是 CLIP 之后图文对齐（Vision-Language Alignment）最重要的改进之一。面试被问"图文对齐怎么做"时，SigLIP 是必须能讲透的模型。

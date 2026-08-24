@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # 对比学习与 CLIP：图文对齐的范式奠基
 
 ## 一、对比学习（Contrastive Learning）总览

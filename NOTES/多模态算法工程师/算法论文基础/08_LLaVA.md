@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # LLaVA：视觉塔 + MLP 投影 + LLM 的多模态指令微调范式
 
 > 本笔记详解 LLaVA（Large Language and Vision Assistant）系列：LLaVA（2023，NeurIPS 2023 Oral）、LLaVA-1.5（2023.10）、LLaVA-NeXT（即 LLaVA-1.6，2024）。LLaVA 用最简单的架构（CLIP 视觉塔 + 单层 Linear 投影 + Vicuna/LLaMA LLM）配合 GPT-4 生成的指令数据，以极低成本实现了与 BLIP-2、InstructBLIP 等复杂模型相当甚至更强的视觉对话能力，成为后续几乎所有开源 VLM（Qwen-VL、InternVL、MiniCPM-V 等）的基线范式。面试被问"开源 VLM 是怎么做的"，LLaVA 是绕不开的第一站。

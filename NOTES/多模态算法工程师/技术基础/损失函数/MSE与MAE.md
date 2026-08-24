@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # MSE 与 MAE（回归损失）与 Smooth L1
 
 > 本模块索引见 [损失函数详解](损失函数详解.md)

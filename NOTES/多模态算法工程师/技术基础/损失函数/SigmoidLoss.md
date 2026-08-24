@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # Sigmoid Loss（SigLIP 逐对损失）
 
 > 本模块索引见 [损失函数详解](损失函数详解.md)

@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # LoRA：低秩适配（Low-Rank Adaptation）
 
 > 本模块索引见 [参数高效微调PEFT详解](参数高效微调PEFT详解.md)

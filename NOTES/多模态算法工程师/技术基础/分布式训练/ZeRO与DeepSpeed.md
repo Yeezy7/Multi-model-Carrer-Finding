@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # ZeRO 与 DeepSpeed
 
 > 本模块索引见 [分布式训练详解](分布式训练详解.md)

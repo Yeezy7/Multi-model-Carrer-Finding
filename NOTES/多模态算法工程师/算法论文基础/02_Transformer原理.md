@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # Transformer 原理：从 Attention 到 LLM 的基石
 
 ## 一、为什么需要 Transformer

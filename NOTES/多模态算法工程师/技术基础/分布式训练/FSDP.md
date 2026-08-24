@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # FSDP：全参数分片数据并行（Fully Sharded Data Parallel）
 
 > 本模块索引见 [分布式训练详解](分布式训练详解.md)

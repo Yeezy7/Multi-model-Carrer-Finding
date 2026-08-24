@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # QLoRA：4-bit 量化基座 + LoRA（单卡微调利器）
 
 > 本模块索引见 [参数高效微调PEFT详解](参数高效微调PEFT详解.md)

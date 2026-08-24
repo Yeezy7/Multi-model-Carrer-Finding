@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # Greedy 与 Beam Search 解码
 
 > 本模块索引见 [解码策略详解](解码策略详解.md)

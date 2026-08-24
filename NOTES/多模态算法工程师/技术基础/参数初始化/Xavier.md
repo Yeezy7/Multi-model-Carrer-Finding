@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # Xavier 初始化（Glorot 初始化）
 
 > 本模块索引见 [参数初始化详解](参数初始化详解.md)

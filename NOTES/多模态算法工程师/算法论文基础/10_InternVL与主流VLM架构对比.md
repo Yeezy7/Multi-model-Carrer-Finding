@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # InternVL 与主流 VLM 架构横向对比
 
 > 本笔记回答一个面试核心问题：**开源 VLM 那么多，它们到底差在哪？** 答案是：差在视觉塔（多大）、桥接器（怎么把视觉变成 token）、token 策略（留多少、怎么压）、训练范式（训到哪一步）。InternVL 系列是这四件事做得最全的开放模型，以它为轴心，横向对比 LLaVA、Qwen-VL、MiniCPM-V、PaliGemma、Llama 3.2-Vision，并延伸到 GPT-4o / Gemini 的原生多模态路线。

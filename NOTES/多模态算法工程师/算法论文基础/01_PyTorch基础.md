@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # PyTorch 基础：从张量到完整训练
 
 ## 一、PyTorch 总体认知

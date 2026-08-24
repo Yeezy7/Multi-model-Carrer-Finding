@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # Transformer 初始化：N(0, 0.02)、Scaled Init 与 DeepNorm
 
 > 本模块索引见 [参数初始化详解](参数初始化详解.md)

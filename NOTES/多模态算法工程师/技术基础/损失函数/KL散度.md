@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # KL 散度（Kullback-Leibler Divergence）
 
 > 本模块索引见 [损失函数详解](损失函数详解.md)

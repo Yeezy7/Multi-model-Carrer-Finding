@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # Prompt Tuning 与 Prefix Tuning：软提示家族
 
 > 本模块索引见 [参数高效微调PEFT详解](参数高效微调PEFT详解.md)

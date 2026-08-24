@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # ALiBi：注意力线性偏置（Attention with Linear Biases）
 
 > 本模块索引见 [位置编码专题详解](位置编码专题详解.md)

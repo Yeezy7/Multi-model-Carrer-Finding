@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # BLIP：Bootstrapping Language-Image Pre-training 完整剖析
 
 > 本笔记讲解 BLIP（Bootstrapping Language-Image Pre-training），由 Salesforce 于 2022 年提出（NeurIPS 2022），是"理解 + 生成"统一多模态预训练的开创性工作之一。面试被问"多模态预训练怎么做""如何清洗图文数据""BLIP 和 CLIP 有什么区别"时，本笔记是核心弹药库。

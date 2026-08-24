@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # 参数高效微调 PEFT 详解：LoRA、QLoRA、Adapter、Prompt Tuning 全谱系
 
 ## 子篇索引

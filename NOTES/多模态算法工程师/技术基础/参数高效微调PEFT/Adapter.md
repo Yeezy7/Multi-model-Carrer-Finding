@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # Adapter：瓶颈适配器（Bottleneck Adapter）
 
 > 本模块索引见 [参数高效微调PEFT详解](参数高效微调PEFT详解.md)

@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # SwiGLU 激活函数（LLM FFN 标配）
 
 > 本模块索引见 [激活函数详解](激活函数详解.md)

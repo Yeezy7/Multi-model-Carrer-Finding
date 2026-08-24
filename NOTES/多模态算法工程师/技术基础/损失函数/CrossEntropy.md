@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # 交叉熵损失 CrossEntropyLoss
 
 > 本模块索引见 [损失函数详解](损失函数详解.md)

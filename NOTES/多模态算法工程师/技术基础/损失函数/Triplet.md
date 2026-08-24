@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # Triplet Loss（三元组损失）
 
 > 本模块索引见 [损失函数详解](损失函数详解.md)

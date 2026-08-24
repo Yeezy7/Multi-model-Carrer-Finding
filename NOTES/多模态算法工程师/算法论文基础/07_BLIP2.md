@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # BLIP-2 冻结塔桥接：Q-Former 与两阶段预训练的完整剖析
 
 > BLIP-2（Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models）由 Salesforce 于 2023 年提出（ICML 2023，一作李东）。它是"低成本获得强大 VLM"路线上的里程碑：**视觉塔冻结、LLM 冻结，只训练一个 188M 的轻量桥接器 Q-Former，就能在 zero-shot VQA / 图文检索 / 图像描述上逼近甚至超越 Flamingo-80B**（训练 FLOPs 少了约 54 倍）。面试被问"不花大钱怎么训 VLM""Q-Former 是干什么的""BLIP-2 和 LLaVA 有什么区别"时，这篇笔记必须能完整答出。

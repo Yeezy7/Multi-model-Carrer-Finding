@@ -1,3 +1,7 @@
+---
+learned: false
+---
+
 # 二分类交叉熵 BCE / BCEWithLogitsLoss
 
 > 本模块索引见 [损失函数详解](损失函数详解.md)
