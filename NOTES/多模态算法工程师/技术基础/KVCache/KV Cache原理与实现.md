@@ -130,13 +130,14 @@ decode 第 $t$ 步（已有 $S=P+t$ 个缓存位置）的成本：
 
 ### 3.3 prefill 与 decode：两个阶段两种瓶颈
 
-| 维度 | Prefill（预填充） | Decode（解码） |
-| --- | --- | --- |
-| 任务 | 一次性并行计算整段 prompt 的全部 K/V 与注意力 | 逐 token 生成，每步只算 1 个新 token |
-| 每步规模 | 一批长序列（~几千~几万 token） | 1 个 token，串行 $n$ 步 |
-| 计算特征 | **计算密集（compute-bound）**，GPU 利用率高，可跨序列批量 | **访存受限（memory-bound）**：每 token 计算量小，却要读全部权重 + 全部 KV |
-| 关键延迟指标 | **TTFT**（Time To First Token）：从请求到吐出第一个 token | **TPOT**（Time Per Output Token）：平均每生成一个 token 的时间 |
-| 总延迟公式 | $\text{延迟} \approx \text{TTFT} + n \times \text{TPOT}$ | —— |
+| 维度     | Prefill（预填充）                                           | Decode（解码）                                          |
+| ------ | ------------------------------------------------------ | --------------------------------------------------- |
+| 任务     | 一次性并行计算整段 prompt 的全部 K/V 与注意力                          | 逐 token 生成，每步只算 1 个新 token                          |
+| 每步规模   | 一批长序列（~几千~几万 token）                                    | 1 个 token，串行 $n$ 步                                  |
+| 计算特征   | **计算密集（compute-bound）**，GPU 利用率高，可跨序列批量                | **访存受限（memory-bound）**：每 token 计算量小，却要读全部权重 + 全部 KV |
+| 关键延迟指标 | **TTFT**（Time To First Token）：从请求到吐出第一个 token          | **TPOT**（Time Per Output Token）：平均每生成一个 token 的时间   |
+| 总延迟公式  | $\text{延迟} \approx \text{TTFT} + n \times \text{TPOT}$ | ——                                                  |
+
 
 **面试要点**：prefill 是长矩阵乘法（算得多、读得少），decode 是"读得远比算得多"——单 token 前向只有约 $2N$ 次乘加，但要搬动 $N$ 个权重 + $O(S)$ 个 KV 出显存，**带宽成为 decode 的瓶颈**。这也是 decode 阶段用 Batch 提高吞吐、以及 KV 量化能同时省显存和带宽的原因。
 
@@ -148,14 +149,14 @@ decode 第 $t$ 步（已有 $S=P+t$ 个缓存位置）的成本：
 
 $$M = 2 \times L \times n_{kv\_heads} \times d_{head} \times S \times \text{bytes}$$
 
-| 符号 | 含义 | 7B 示例取值 |
-| --- | --- | --- |
-| 2 | K 和 V 两份 | 2 |
-| $L$ | 层数 | 32 |
-| $n_{kv\_heads}$ | 每层 KV 头数（MHA = 全部头；GQA = 分组数） | 8（GQA-8）/ 32（全 MHA） |
-| $d_{head}$ | 头维度 | 128 |
-| $S$ | 序列长度（prompt + 已生成） | 2048 |
-| bytes | 每元素字节数 | 2（FP16）/ 1（FP8）/ 0.5（INT4） |
+| 符号              | 含义                            | 7B 示例取值                    |
+| --------------- | ----------------------------- | -------------------------- |
+| 2               | K 和 V 两份                      | 2                          |
+| $L$             | 层数                            | 32                         |
+| $n_{kv\_heads}$ | 每层 KV 头数（MHA = 全部头；GQA = 分组数） | 8（GQA-8）/ 32（全 MHA）        |
+| $d_{head}$      | 头维度                           | 128                        |
+| $S$             | 序列长度（prompt + 已生成）            | 2048                       |
+| bytes           | 每元素字节数                        | 2（FP16）/ 1（FP8）/ 0.5（INT4） |
 
 ### 4.2 7B（32 层、4096 维、GQA 8 组、2048 token、FP16）完整计算
 
@@ -404,12 +405,12 @@ ptr = prompt_len                                    # 位置指针
 
 **FlashAttention（FA）不改变 KV Cache 的语义——它只是把"带缓存后的注意力计算"本身算得更快。**
 
-| 维度 | KV Cache | FlashAttention |
-| --- | --- | --- |
-| 解决什么 | 避免历史 K/V 的重算（算法级） | 注意力 kernel 加速 + 省中间矩阵显存（kernel 级） |
-| 是否影响输出 | 无（精确等价） | 无（数学等价，只是分块计算 + on-the-fly softmax） |
-| 与序列长度 | 缓存大小 O(S) | 显存从 O(S²) 降到 O(S)，但语义不变 |
-| 是否互斥 | 否，工程上**同时使用** | 否，同时使用 |
+| 维度     | KV Cache          | FlashAttention                      |
+| ------ | ----------------- | ----------------------------------- |
+| 解决什么   | 避免历史 K/V 的重算（算法级） | 注意力 kernel 加速 + 省中间矩阵显存（kernel 级）   |
+| 是否影响输出 | 无（精确等价）           | 无（数学等价，只是分块计算 + on-the-fly softmax） |
+| 与序列长度  | 缓存大小 O(S)         | 显存从 O(S²) 降到 O(S)，但语义不变             |
+| 是否互斥   | 否，工程上**同时使用**     | 否，同时使用                              |
 
 两个常见混淆点：
 

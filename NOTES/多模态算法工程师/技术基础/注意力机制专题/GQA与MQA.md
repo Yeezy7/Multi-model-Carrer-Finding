@@ -12,17 +12,17 @@ learned: false
 
 标准的 MHA（Multi-Head Attention）中每个 Q 头都有**独立的一组 K、V 投影**；MQA（Multi-Query Attention）与 GQA（Grouped-Query Attention）让多个 Q 头**共享同一组 K、V**：
 
-| 结构 | Q 头数 | KV 头数 | 共享方式 | 提出时间 |
-|------|--------|---------|---------|---------|
-| MHA | $h$ | $h$（每头独立） | 不共享 | Transformer 原版（2017） |
-| GQA | $h$ | $g$（$g \mid h$） | $h/g$ 个 Q 头共享一组 KV | 2022（Ainslie et al.） |
-| MQA | $h$ | $1$ | 所有 Q 头共享一组 KV | 2019（Shazeer） |
+| 结构  | Q 头数 | KV 头数           | 共享方式               | 提出时间                 |
+| --- | ---- | --------------- | ------------------ | -------------------- |
+| MHA | $h$  | $h$（每头独立）       | 不共享                | Transformer 原版（2017） |
+| GQA | $h$  | $g$（$g \mid h$） | $h/g$ 个 Q 头共享一组 KV | 2022（Ainslie et al.） |
+| MQA | $h$  | $1$             | 所有 Q 头共享一组 KV      | 2019（Shazeer）        |
 
 ```text
-MHA:              GQA (h=8, g=2):       MQA (h=8):
+MHA:                        GQA (h=8, g=2):            MQA (h=8):
  Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8    Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8    Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8
  |  |  |  |  |  |  |  |      |__|  |__|  |__|  |__|      \  \  \  \  \  \  \  \
- K1 K2 K3 K4 K5 K6 K7 K8     KV1     KV2     KV3     KV4   \        KV          \
+ K1 K2 K3 K4 K5 K6 K7 K8     KV1   KV2   KV3   KV4       \        KV          \
 ```
 
 - $g = 1$ 时 GQA 退化为 MQA，$g = h$ 时退化为 MHA——**GQA 是 MHA 与 MQA 的插值**；
@@ -238,13 +238,13 @@ $$\text{MHA KV cache} = 2 \times 80 \times 64 \times 128 \times 8192 \times 2 \t
 
 ## 六、与同类对比
 
-| 维度 | GQA/MQA（共享 KV） | MLA（DeepSeek，低秩压缩 KV） | 稀疏注意力（省计算） |
-|------|-------------------|------------------------------|---------------------|
-| 解决的问题 | 推理 KV cache 显存与带宽 | 推理 KV cache 显存与带宽 | attention 计算量 $O(n^2)$ |
-| 手段 | 砍 KV 头数（共享） | KV 压缩到低维潜变量 $c$，只存 $c$ | 剪掉部分 Q-K 边 |
-| 训练计算量 | 不变 | 降低（KV 投影变小） | 降低 |
-| 质量影响 | 轻微/轻微 | 轻微（低秩近似） | 中（长程依赖丢失） |
-| 与 FlashAttention | 正交，可叠加 | 正交，可叠加 | 与分块优化冲突 |
+| 维度               | GQA/MQA（共享 KV）    | MLA（DeepSeek，低秩压缩 KV）  | 稀疏注意力（省计算）             |
+| ---------------- | ----------------- | ---------------------- | ---------------------- |
+| 解决的问题            | 推理 KV cache 显存与带宽 | 推理 KV cache 显存与带宽      | attention 计算量 $O(n^2)$ |
+| 手段               | 砍 KV 头数（共享）       | KV 压缩到低维潜变量 $c$，只存 $c$ | 剪掉部分 Q-K 边             |
+| 训练计算量            | 不变                | 降低（KV 投影变小）            | 降低                     |
+| 质量影响             | 轻微/轻微             | 轻微（低秩近似）               | 中（长程依赖丢失）              |
+| 与 FlashAttention | 正交，可叠加            | 正交，可叠加                 | 与分块优化冲突                |
 
 > 三者正交：FlashAttention 解决"attention 跑得快"，GQA/MLA 解决"推理存得下"，稀疏解决"算得少"。
 
@@ -275,7 +275,7 @@ MQA 单组 KV 信息容量不足，大模型质量损失明显；GQA 保留 $g$ 
 
 - [ ] 能画出 MHA / GQA / MQA 的 Q-KV 对应结构示意图
 - [ ] 能写出 KV cache 显存公式并算出 70B 模型的数值示例
-- [ ] 能手写三种 nn.Module 并验证 GQA(g=h)==MHA、GQA(g=1)==MQA
+- [ ] 能手写三种 nn.Module 并验证 GQA(g=h)\==MHA、GQA(g=1)\==MQA
 - [ ] 能说清 repeat_interleave 展开共享 KV 的原理
 - [ ] 能解释"GQA 省推理、不省训练计算量"的原因
 - [ ] 能回答"为什么 LLaMA2/3 用 GQA 而不是 MQA"

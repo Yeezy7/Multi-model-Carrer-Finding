@@ -1,5 +1,5 @@
 ---
-learned: false
+learned: true
 ---
 
 # DDP：分布式数据并行

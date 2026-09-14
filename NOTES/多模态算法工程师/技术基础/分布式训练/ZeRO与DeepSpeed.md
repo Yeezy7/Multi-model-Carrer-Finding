@@ -289,11 +289,12 @@ if __name__ == "__main__":
 
 设模型大小 $M$ 字节（7B BF16：$M$ = 14GB），每步训练：
 
-| 方案 | 每步通信内容 | 通信量 |
-| --- | --- | --- |
-| DDP | 1 次梯度 all-reduce（ring 算法 ≈ reduce-scatter + all-gather 融合） | $2M$ ≈ 28GB |
-| ZeRO-1/2 | 梯度 all-reduce 同上（ZeRO-2 的 reduce-scatter 融合在其中） | ≈ $2M$ |
-| ZeRO-3 | 前向参数 all-gather $M$ + 反向参数 all-gather $M$ + 梯度 reduce-scatter $M$ | $3M$ ≈ 42GB |
+| 方案       | 每步通信内容                                                            | 通信量         |
+| -------- | ----------------------------------------------------------------- | ----------- |
+| DDP      | 1 次梯度 all-reduce（ring 算法 ≈ reduce-scatter + all-gather 融合）        | $2M$ ≈ 28GB |
+| ZeRO-1/2 | 梯度 all-reduce 同上（ZeRO-2 的 reduce-scatter 融合在其中）                   | ≈ $2M$      |
+| ZeRO-3   | 前向参数 all-gather $M$ + 反向参数 all-gather $M$ + 梯度 reduce-scatter $M$ | $3M$ ≈ 42GB |
+
 
 $$\text{ZeRO-3 通信量} = \frac{3M}{2M} = 1.5 \times \text{DDP}$$
 

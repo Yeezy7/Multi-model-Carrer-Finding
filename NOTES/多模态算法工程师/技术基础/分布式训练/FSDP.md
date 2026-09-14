@@ -161,7 +161,8 @@ class TinyGPT(nn.Module):
         return self.head(h)
 
 def main():
-    dist.init_process_group("nccl")            # GPU 环境用 nccl；CPU 演示可换 "gloo"
+    dist.init_proces
+    s_group("nccl")            # GPU 环境用 nccl；CPU 演示可换 "gloo"
     rank = dist.get_rank()
     torch.cuda.set_device(rank)
 
