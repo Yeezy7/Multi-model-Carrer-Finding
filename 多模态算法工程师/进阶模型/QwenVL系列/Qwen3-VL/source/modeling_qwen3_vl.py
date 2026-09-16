@@ -65,19 +65,21 @@ class BaseModelOutputWithDeepstackFeatures(BaseModelOutputWithPooling):
 
 
 class Qwen3VLVisionMLP(nn.Module):
+    """前馈神经网络（Feed-Forward Neural Network，FFN）模块，用于对输入的隐藏状态进行非线性变换。"""
     def __init__(self, config):
         super().__init__()
         self.hidden_size = config.hidden_size
         self.intermediate_size = config.intermediate_size
         self.linear_fc1 = nn.Linear(self.hidden_size, self.intermediate_size, bias=True)
         self.linear_fc2 = nn.Linear(self.intermediate_size, self.hidden_size, bias=True)
-        self.act_fn = ACT2FN[config.hidden_act]
+        self.act_fn = ACT2FN[config.hidden_act]     # GELU 激活函数 
 
     def forward(self, hidden_state):
         return self.linear_fc2(self.act_fn(self.linear_fc1(hidden_state)))
 
 
 class Qwen3VLVisionPatchEmbed(nn.Module):
+    """Qwen3-VL 视觉 patch embedding 模块，将图像分割为 patch 并进行嵌入。"""
     def __init__(self, config) -> None:
         super().__init__()
         self.patch_size = config.patch_size
@@ -98,45 +100,49 @@ class Qwen3VLVisionPatchEmbed(nn.Module):
 
 
 class Qwen3VLVisionRotaryEmbedding(nn.Module):
-    inv_freq: torch.Tensor  # fix linting for `register_buffer`
+    """Qwen3-VL 视觉旋转位置嵌入模块，用于为查询和键添加旋转位置编码。"""
+    inv_freq: torch.Tensor  # 修复“register_buffer”函数的代码格式检查问题
 
     def __init__(self, dim: int, theta: float = 10000.0) -> None:
         super().__init__()
         self.dim = dim
         self.theta = theta
-        inv_freq = 1.0 / (theta ** (torch.arange(0, dim, 2, dtype=torch.float) / dim))
+        inv_freq = 1.0 / (theta ** (torch.arange(0, dim, 2, dtype=torch.float) / dim))  # θ ^(-2i/dim)
         self.register_buffer("inv_freq", inv_freq, persistent=False)
 
     def forward(self, position_ids: torch.Tensor) -> torch.Tensor:
-        return (position_ids.unsqueeze(-1) * self.inv_freq).flatten(1)
+        return (position_ids.unsqueeze(-1) * self.inv_freq).flatten(1)  # pos * inv_freq
 
 
 class Qwen3VLVisionPatchMerger(nn.Module):
+    """Qwen3-VL 视觉 patch 合并模块，用于将多个 patch embedding 合并为最终的输出。对接大语言模型的输入"""
     def __init__(self, config: Qwen3VLVisionConfig, use_postshuffle_norm=False) -> None:
         super().__init__()
-        self.hidden_size = config.hidden_size * (config.spatial_merge_size**2)
-        self.use_postshuffle_norm = use_postshuffle_norm
+        self.hidden_size = config.hidden_size * (config.spatial_merge_size**2)  # 合并后的隐藏维度
+        self.use_postshuffle_norm = use_postshuffle_norm    # 是否使用后处理归一化
         self.norm = nn.LayerNorm(self.hidden_size if use_postshuffle_norm else config.hidden_size, eps=1e-6)
         self.linear_fc1 = nn.Linear(self.hidden_size, self.hidden_size)
         self.act_fn = nn.GELU()
         self.linear_fc2 = nn.Linear(self.hidden_size, config.out_hidden_size)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = self.norm(x.view(-1, self.hidden_size) if self.use_postshuffle_norm else x).view(-1, self.hidden_size)
+        """将输入的隐藏状态张量进行处理，得到最终的输出。"""
+        x = self.norm(x.view(-1, self.hidden_size) if self.use_postshuffle_norm else x).view(-1, self.hidden_size)  # 先经 2x2 合并成1024个patch，再是否进行归一化
         x = self.linear_fc2(self.act_fn(self.linear_fc1(x)))
         return x
 
 
 def rotate_half(x):
-    """Rotates half the hidden dims of the input."""
-    x1 = x[..., : x.shape[-1] // 2]
-    x2 = x[..., x.shape[-1] // 2 :]
-    return torch.cat((-x2, x1), dim=-1)
+    """将输入隐藏维度的一半进行旋转。"""
+    x1 = x[..., : x.shape[-1] // 2]     # x1 = x[..., 0 : dim/2]
+    x2 = x[..., x.shape[-1] // 2 :]     # x2 = x[..., dim/2 : dim]
+    return torch.cat((-x2, x1), dim=-1)     # [-x2, x1]
 
 
 def apply_rotary_pos_emb_vision(
     q: torch.Tensor, k: torch.Tensor, cos: torch.Tensor, sin: torch.Tensor
 ) -> tuple[torch.Tensor, torch.Tensor]:
+    """在视觉任务中，对查询（query）和键（key）张量应用旋转位置编码（rotary position embedding）。"""
     orig_q_dtype = q.dtype
     orig_k_dtype = k.dtype
     q, k = q.float(), k.float()
@@ -194,7 +200,7 @@ class Qwen3VLVisionAttention(nn.Module):
         self.num_key_value_groups = 1  # needed for eager attention
         self.qkv = nn.Linear(self.dim, self.dim * 3, bias=True)
         self.proj = nn.Linear(self.dim, self.dim)
-        self.scaling = self.head_dim**-0.5
+        self.scaling = self.head_dim**-0.5  # √d
         self.config = config
         self.attention_dropout = 0.0
         self.is_causal = False
@@ -208,22 +214,22 @@ class Qwen3VLVisionAttention(nn.Module):
         **kwargs,
     ) -> torch.Tensor:
         seq_length = hidden_states.shape[0]
-        query_states, key_states, value_states = (
+        query_states, key_states, value_states = (   # 将输入的隐藏状态张量进行线性变换，得到Q、K和V的表示
             self.qkv(hidden_states).reshape(seq_length, 3, self.num_heads, -1).permute(1, 0, 2, 3).unbind(0)
         )
-        cos, sin = position_embeddings
-        query_states, key_states = apply_rotary_pos_emb_vision(query_states, key_states, cos, sin)
+        cos, sin = position_embeddings   # 获取旋转位置嵌入的余弦和正弦值
+        query_states, key_states = apply_rotary_pos_emb_vision(query_states, key_states, cos, sin)  # 对Q和K应用旋转位置嵌入
 
         query_states = query_states.transpose(0, 1).unsqueeze(0)
         key_states = key_states.transpose(0, 1).unsqueeze(0)
         value_states = value_states.transpose(0, 1).unsqueeze(0)
 
-        attention_interface: Callable = ALL_ATTENTION_FUNCTIONS.get_interface(
+        attention_interface: Callable = ALL_ATTENTION_FUNCTIONS.get_interface(  # 根据配置选择注意力计算的实现方式
             self.config._attn_implementation, eager_attention_forward
         )
 
         if is_flash_attention_requested(self.config):
-            # Flash Attention: Use cu_seqlens for variable length attention
+            # Flash注意力：使用cu_seqlens处理变长注意力。
             max_seqlen = (cu_seqlens[1:] - cu_seqlens[:-1]).max()
             attn_output, _ = attention_interface(
                 self,
@@ -241,7 +247,7 @@ class Qwen3VLVisionAttention(nn.Module):
                 **kwargs,
             )
         else:
-            # Other implementations: Process each chunk separately
+            # 其他实现方式：分别处理每个块（chunk）
             lengths = cu_seqlens[1:] - cu_seqlens[:-1]
             splits = [
                 torch.split(tensor, lengths.tolist(), dim=2) for tensor in (query_states, key_states, value_states)
@@ -280,14 +286,14 @@ class Qwen3VLVisionBlock(GradientCheckpointingLayer):
     @auto_docstring
     def forward(
         self,
-        hidden_states: torch.Tensor,
+        hidden_states: torch.Tensor,    # 输入的隐藏状态张量，即中间特征
         cu_seqlens: torch.Tensor,
         position_embeddings: tuple[torch.Tensor, torch.Tensor] | None = None,
         **kwargs,
     ) -> torch.Tensor:
         r"""
         cu_seqlens (`torch.Tensor`):
-            Cumulative sequence lengths used for packed variable-length attention in Flash Attention kernels.
+            用于Flash Attention内核中打包变长注意力机制的累积序列长度。
         """
         hidden_states = hidden_states + self.attn(
             self.norm1(hidden_states),
@@ -300,6 +306,7 @@ class Qwen3VLVisionBlock(GradientCheckpointingLayer):
 
 
 class Qwen3VLTextRotaryEmbedding(nn.Module):
+    """文本旋转位置嵌入层"""
     inv_freq: torch.Tensor  # fix linting for `register_buffer`
 
     def __init__(self, config: Qwen3VLTextConfig, device=None):
@@ -318,7 +325,7 @@ class Qwen3VLTextRotaryEmbedding(nn.Module):
         self.register_buffer("inv_freq", inv_freq, persistent=False)
         self.register_buffer("original_inv_freq", inv_freq.clone(), persistent=False)
 
-        self.mrope_section = config.rope_parameters.get("mrope_section", [24, 20, 20])
+        self.mrope_section = config.rope_parameters.get("mrope_section", [24, 20, 20])  # 旋转位置嵌入的分块大小
 
     @staticmethod
     def compute_default_rope_parameters(
@@ -394,11 +401,11 @@ class Qwen3VLTextRotaryEmbedding(nn.Module):
 class Qwen3VLTextRMSNorm(nn.Module):
     def __init__(self, hidden_size, eps: float = 1e-6) -> None:
         """
-        Qwen3VLTextRMSNorm is equivalent to T5LayerNorm
+        Qwen3VLTextRMSNorm 等同于 T5LayerNorm
         """
         super().__init__()
         self.weight = nn.Parameter(torch.ones(hidden_size))
-        self.variance_epsilon = eps
+        self.variance_epsilon = eps  # 方差epsilon
 
     def forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
         input_dtype = hidden_states.dtype
@@ -439,22 +446,22 @@ def apply_rotary_pos_emb(q, k, cos, sin, unsqueeze_dim=1):
 
 @use_kernelized_func(apply_rotary_pos_emb)
 class Qwen3VLTextAttention(nn.Module):
-    """Multi-headed attention from 'Attention Is All You Need' paper"""
+    """多头注意力机制（Multi-Head Attention，MHA）模块，用于对输入的隐藏状态进行注意力计算。"""
 
     def __init__(self, config: Qwen3VLTextConfig, layer_idx: int):
         super().__init__()
-        self.layer_type = config.layer_types[layer_idx] if hasattr(config, "layer_types") else None
+        self.layer_type = config.layer_types[layer_idx] if hasattr(config, "layer_types") else None  # 层类型
         self.config = config
-        self.layer_idx = layer_idx
+        self.layer_idx = layer_idx  # [0, 1, ..., 32]
         self.head_dim = getattr(config, "head_dim", config.hidden_size // config.num_attention_heads)
-        self.num_key_value_groups = config.num_attention_heads // config.num_key_value_heads
+        self.num_key_value_groups = config.num_attention_heads // config.num_key_value_heads  # key-value组数
         self.scaling = self.head_dim**-0.5
         self.attention_dropout = config.attention_dropout
-        self.is_causal = True
+        self.is_causal = True   # 掩码注意力
 
-        self.q_proj = nn.Linear(
+        self.q_proj = nn.Linear(    # 查询投影层
             config.hidden_size, config.num_attention_heads * self.head_dim, bias=config.attention_bias
-        )
+        ) 
         self.k_proj = nn.Linear(
             config.hidden_size, config.num_key_value_heads * self.head_dim, bias=config.attention_bias
         )
@@ -464,7 +471,7 @@ class Qwen3VLTextAttention(nn.Module):
         self.o_proj = nn.Linear(
             config.num_attention_heads * self.head_dim, config.hidden_size, bias=config.attention_bias
         )
-        self.q_norm = Qwen3VLTextRMSNorm(self.head_dim, eps=config.rms_norm_eps)  # unlike olmo, only on the head dim!
+        self.q_norm = Qwen3VLTextRMSNorm(self.head_dim, eps=config.rms_norm_eps)  # RMSNorm 归一化层，用于对查询向量进行归一化
         self.k_norm = Qwen3VLTextRMSNorm(
             self.head_dim, eps=config.rms_norm_eps
         )  # thus post q_norm does not need reshape
@@ -480,21 +487,21 @@ class Qwen3VLTextAttention(nn.Module):
         input_shape = hidden_states.shape[:-1]
         hidden_shape = (*input_shape, -1, self.head_dim)
 
-        query_states = self.q_norm(self.q_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+        query_states = self.q_norm(self.q_proj(hidden_states).view(hidden_shape)).transpose(1, 2)   # 查询向量
         key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
         value_states = self.v_proj(hidden_states).view(hidden_shape).transpose(1, 2)
 
-        cos, sin = position_embeddings
-        query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)
+        cos, sin = position_embeddings  # 旋转位置嵌入
+        query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)  # 应用旋转位置嵌入
 
-        if past_key_values is not None:
+        if past_key_values is not None:  # 应用KV Cache
             key_states, value_states = past_key_values.update(key_states, value_states, self.layer_idx)
 
         attention_interface: Callable = ALL_ATTENTION_FUNCTIONS.get_interface(
             self.config._attn_implementation, eager_attention_forward
         )
 
-        attn_output, attn_weights = attention_interface(
+        attn_output, attn_weights = attention_interface(    # 注意力机制
             self,
             query_states,
             key_states,
@@ -507,7 +514,7 @@ class Qwen3VLTextAttention(nn.Module):
 
         attn_output = attn_output.reshape(*input_shape, -1).contiguous()
         attn_output = self.o_proj(attn_output)
-        return attn_output, attn_weights
+        return attn_output, attn_weights    # 输出注意力机制的输出 注意力权重
 
 
 class Qwen3VLTextMLP(nn.Module):
@@ -527,15 +534,16 @@ class Qwen3VLTextMLP(nn.Module):
 
 
 class Qwen3VLTextDecoderLayer(GradientCheckpointingLayer):
+    """解码器层，包含自注意力机制和前馈神经网络。"""
     def __init__(self, config: Qwen3VLTextConfig, layer_idx: int):
         super().__init__()
         self.hidden_size = config.hidden_size
 
-        self.self_attn = Qwen3VLTextAttention(config=config, layer_idx=layer_idx)
+        self.self_attn = Qwen3VLTextAttention(config=config, layer_idx=layer_idx)   # 注意力机制
 
-        self.mlp = Qwen3VLTextMLP(config)
-        self.input_layernorm = Qwen3VLTextRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
-        self.post_attention_layernorm = Qwen3VLTextRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+        self.mlp = Qwen3VLTextMLP(config)   # 前馈神经网络
+        self.input_layernorm = Qwen3VLTextRMSNorm(config.hidden_size, eps=config.rms_norm_eps)  # 输入层一化层
+        self.post_attention_layernorm = Qwen3VLTextRMSNorm(config.hidden_size, eps=config.rms_norm_eps)  # 后注意力层一化层
 
     def forward(
         self,
@@ -550,7 +558,7 @@ class Qwen3VLTextDecoderLayer(GradientCheckpointingLayer):
         residual = hidden_states
         hidden_states = self.input_layernorm(hidden_states)
         # Self Attention
-        hidden_states, _ = self.self_attn(
+        hidden_states, _ = self.self_attn(  # 因果掩码注意力
             hidden_states=hidden_states,
             attention_mask=attention_mask,
             position_ids=position_ids,
@@ -559,13 +567,13 @@ class Qwen3VLTextDecoderLayer(GradientCheckpointingLayer):
             position_embeddings=position_embeddings,
             **kwargs,
         )
-        hidden_states = residual + hidden_states
+        hidden_states = residual + hidden_states    # 残差
 
         # Fully Connected
         residual = hidden_states
         hidden_states = self.post_attention_layernorm(hidden_states)
         hidden_states = self.mlp(hidden_states)
-        hidden_states = residual + hidden_states
+        hidden_states = residual + hidden_states    # 残差
         return hidden_states
 
 
@@ -583,6 +591,7 @@ class Qwen3VLModelOutputWithPast(BaseModelOutputWithPast):
 
 @auto_docstring
 class Qwen3VLPreTrainedModel(PreTrainedModel):
+    """Qwen3-VL预训练模型基类"""
     config: Qwen3VLConfig
     base_model_prefix = "model"
     input_modalities = ("image", "video", "text")
@@ -616,42 +625,44 @@ class Qwen3VLVisionModel(Qwen3VLPreTrainedModel):
 
     def __init__(self, config, *inputs, **kwargs) -> None:
         super().__init__(config, *inputs, **kwargs)
-        self.spatial_merge_size = config.spatial_merge_size
+        self.spatial_merge_size = config.spatial_merge_size     # 空间合并大小
         self.patch_size = config.patch_size
         self.spatial_merge_unit = self.spatial_merge_size * self.spatial_merge_size
 
-        self.patch_embed = Qwen3VLVisionPatchEmbed(
+        self.patch_embed = Qwen3VLVisionPatchEmbed(   # 分割后的 patch embedding
             config=config,
         )
 
-        self.pos_embed = nn.Embedding(config.num_position_embeddings, config.hidden_size)
-        self.num_grid_per_side = int(config.num_position_embeddings**0.5)
+        self.pos_embed = nn.Embedding(config.num_position_embeddings, config.hidden_size)   # 位置嵌入
+        self.num_grid_per_side = int(config.num_position_embeddings**0.5)   # 每边的网格数
 
         head_dim = config.hidden_size // config.num_heads
-        self.rotary_pos_emb = Qwen3VLVisionRotaryEmbedding(head_dim // 2)
+        self.rotary_pos_emb = Qwen3VLVisionRotaryEmbedding(head_dim // 2)   # 旋转位置嵌入
+        
 
-        self.blocks = nn.ModuleList([Qwen3VLVisionBlock(config) for _ in range(config.depth)])
-        self.merger = Qwen3VLVisionPatchMerger(
+        self.blocks = nn.ModuleList([Qwen3VLVisionBlock(config) for _ in range(config.depth)])  # 27个transformer 层
+        self.merger = Qwen3VLVisionPatchMerger(    # Qwen3-VL 视觉 patch 合并模块，用于将多个 patch embedding 合并为最终的输出。对接大语言模型的输入
             config=config,
-            use_postshuffle_norm=False,
+            use_postshuffle_norm=False,     # 不使用后处理归一化
         )
 
-        self.deepstack_visual_indexes = config.deepstack_visual_indexes
+        self.deepstack_visual_indexes = config.deepstack_visual_indexes # 在 [8, 16, 24] 层上进行deepstack 
         self.deepstack_merger_list = nn.ModuleList(
             [
-                Qwen3VLVisionPatchMerger(
+                Qwen3VLVisionPatchMerger( 
                     config=config,
-                    use_postshuffle_norm=True,
+                    use_postshuffle_norm=True,  # 在deepstack层上使用后处理归一化
                 )
                 for _ in range(len(config.deepstack_visual_indexes))
             ]
         )
 
-        self.gradient_checkpointing = False
+        self.gradient_checkpointing = False  # 不使用梯度检查点
 
-        self.post_init()
+        self.post_init()    # 初始化模型参数
 
     def rot_pos_emb(self, grid_thw: torch.Tensor) -> torch.Tensor:
+        """计算旋转位置嵌入"""
         warnings.warn(
             f"`{self.__class__.__name__}.rot_pos_emb` is deprecated and will be removed in v5.11. Use `get_vision_position_ids` from `transformers.vision_utils` and apply the rotary embedding module.",
             FutureWarning,
@@ -689,25 +700,26 @@ class Qwen3VLVisionModel(Qwen3VLPreTrainedModel):
         Returns:
             `torch.Tensor`: hidden_states.
         """
+        # 获取视觉双线性索引和权重
         bilinear_indices, bilinear_weights = get_vision_bilinear_indices_and_weights(
             grid_thw,
             num_grid_per_side=self.num_grid_per_side,
             spatial_merge_size=self.config.spatial_merge_size,
             kwargs=kwargs,
         )
-        position_ids = get_vision_position_ids(grid_thw, self.spatial_merge_size, kwargs=kwargs)
-        cu_seqlens = get_vision_cu_seqlens(grid_thw, kwargs=kwargs)
+        position_ids = get_vision_position_ids(grid_thw, self.spatial_merge_size, kwargs=kwargs)  # 获取视觉位置ID
+        cu_seqlens = get_vision_cu_seqlens(grid_thw, kwargs=kwargs)  # 获取视觉累积序列长度，用于Flash Attention内核中打包变长注意力机制
 
-        hidden_states = self.patch_embed(hidden_states)
-        pos_embeds = (self.pos_embed(bilinear_indices) * bilinear_weights[:, :, None]).sum(0)
-        hidden_states = hidden_states + pos_embeds.to(hidden_states.dtype)
-        rotary_pos_emb = self.rotary_pos_emb(position_ids)
+        hidden_states = self.patch_embed(hidden_states)   # 将输入的图像或视频帧分割成patch，并进行嵌入
+        pos_embeds = (self.pos_embed(bilinear_indices) * bilinear_weights[:, :, None]).sum(0)  # 计算双线性插值位置嵌入
+        hidden_states = hidden_states + pos_embeds.to(hidden_states.dtype)  # 可学习绝对位置嵌入
+        rotary_pos_emb = self.rotary_pos_emb(position_ids)  # 计算旋转位置嵌入
 
         seq_len, _ = hidden_states.size()
         hidden_states = hidden_states.reshape(seq_len, -1)
         rotary_pos_emb = rotary_pos_emb.reshape(seq_len, -1)
-        emb = torch.cat((rotary_pos_emb, rotary_pos_emb), dim=-1)
-        position_embeddings = (emb.cos(), emb.sin())
+        emb = torch.cat((rotary_pos_emb, rotary_pos_emb), dim=-1)  # 将旋转位置嵌入复制一份并拼接在一起，形成最终的旋转位置嵌入
+        position_embeddings = (emb.cos(), emb.sin())   
 
         deepstack_feature_lists = []
         for layer_num, blk in enumerate(self.blocks):
@@ -726,9 +738,9 @@ class Qwen3VLVisionModel(Qwen3VLPreTrainedModel):
         merged_hidden_states = self.merger(hidden_states)
 
         return BaseModelOutputWithDeepstackFeatures(
-            last_hidden_state=hidden_states,
-            pooler_output=merged_hidden_states,
-            deepstack_features=deepstack_feature_lists,
+            last_hidden_state=hidden_states,    # 最终隐藏状态
+            pooler_output=merged_hidden_states, # 合并后的隐藏状态
+            deepstack_features=deepstack_feature_lists, # DeepStack特征列表
         )
 
 
@@ -739,6 +751,7 @@ class Qwen3VLVisionModel(Qwen3VLPreTrainedModel):
     )
 )
 class Qwen3VLTextModel(Qwen3VLPreTrainedModel):
+    """文本模型，本质是一个自回归语言模型"""
     config: Qwen3VLTextConfig
     input_modalities = ("text",)
 
@@ -748,12 +761,12 @@ class Qwen3VLTextModel(Qwen3VLPreTrainedModel):
         self.vocab_size = config.vocab_size
 
         self.embed_tokens = nn.Embedding(config.vocab_size, config.hidden_size, self.padding_idx)
-        self.layers = nn.ModuleList(
+        self.layers = nn.ModuleList(    # 32 层 Decoder
             [Qwen3VLTextDecoderLayer(config, layer_idx) for layer_idx in range(config.num_hidden_layers)]
         )
-        self.norm = Qwen3VLTextRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
-        self.rotary_emb = Qwen3VLTextRotaryEmbedding(config=config)
-        self.gradient_checkpointing = False
+        self.norm = Qwen3VLTextRMSNorm(config.hidden_size, eps=config.rms_norm_eps) # RMS归一化层
+        self.rotary_emb = Qwen3VLTextRotaryEmbedding(config=config) # 位置嵌入 [cos, sin]
+        self.gradient_checkpointing = False  # 关闭梯度检查点
 
         # Initialize weights and apply final processing
         self.post_init()
@@ -790,7 +803,7 @@ class Qwen3VLTextModel(Qwen3VLPreTrainedModel):
             past_key_values = DynamicCache(config=self.config)
 
         if inputs_embeds is None:
-            inputs_embeds = self.embed_tokens(input_ids)
+            inputs_embeds = self.embed_tokens(input_ids)  # 输入嵌入
 
         # the hard coded `4` is for text, temporal, height and width.
         if position_ids is None:
@@ -806,18 +819,18 @@ class Qwen3VLTextModel(Qwen3VLPreTrainedModel):
         else:
             text_position_ids = None
 
-        attention_mask = create_causal_mask(
+        attention_mask = create_causal_mask(    # 创建因果掩码
             config=self.config,
-            inputs_embeds=inputs_embeds,
-            attention_mask=attention_mask,
-            past_key_values=past_key_values,
-            position_ids=text_position_ids,
+            inputs_embeds=inputs_embeds, # 仅用于推断 batch、query 长度、dtype、device
+            attention_mask=attention_mask,  # 屏蔽 pad 位置
+            past_key_values=past_key_values,    # 生成时的 KV cache 提供历史长度，决定掩码的行列偏移
+            position_ids=text_position_ids, # 推断 query 长度和 cache 偏移
         )
 
         hidden_states = inputs_embeds
 
         # create position embeddings to be shared across the decoder layers
-        position_embeddings = self.rotary_emb(hidden_states, position_ids)
+        position_embeddings = self.rotary_emb(hidden_states, position_ids)  # 旋转位置嵌入
 
         # decoder layers
         for layer_idx, decoder_layer in enumerate(self.layers):
@@ -859,14 +872,15 @@ class Qwen3VLTextModel(Qwen3VLPreTrainedModel):
 
 @auto_docstring
 class Qwen3VLModel(Qwen3VLPreTrainedModel):
+    """Qwen3VL 模型，集成了视觉和文本模型，支持多模态输入。"""
     base_model_prefix = "model"
     # Reference: fix gemma3 grad acc #37208
     accepts_loss_kwargs = False
 
     def __init__(self, config):
         super().__init__(config)
-        self.visual = AutoModel.from_config(config.vision_config)
-        self.language_model = AutoModel.from_config(config.text_config)
+        self.visual = AutoModel.from_config(config.vision_config)   # 视觉模型
+        self.language_model = AutoModel.from_config(config.text_config)  # 文本模型
         self.rope_deltas = None  # cache rope_deltas here
 
         # Initialize weights and apply final processing
@@ -882,27 +896,27 @@ class Qwen3VLModel(Qwen3VLPreTrainedModel):
         device: str | torch.device | None = None,
     ):
         """
-        Compute 3D positional indices for vision tokens derived from a single image or video input.
+        根据单张图像或视频输入，计算视觉令牌的三维位置索引。
 
-        The positions are generated from the input grid defined by temporal (T), height (H), and
-        width (W) dimensions. Temporal and spatial dimensions can be downscaled according to the
-        merge sizes used in the vision backbone. The resulting positions are offset by `start_position`.
+        位置由时间（T）、高度（H）和宽度（W）维度定义的输入网格生成。
+        时间与空间维度可根据视觉主干网络中使用的合并尺寸进行下采样。
+        最终的位置会加上 `start_position` 的偏移量。
 
         Args:
-            start_position (`int`):
-                Offset added to all computed positional indices.
-            grid_thw (`Sequence[int]` or `torch.Tensor` of shape `(3,)`):
-                The (T, H, W) grid representing the feature layout of the current image or video after patch embedding.
-            temp_merge_size (`int`, *optional*):
-                Factor by which the temporal dimension is reduced in the backbone. The temporal grid size is divided
-                by this value. Defaults to 1.
-            spatial_merge_size (`int`, *optional*):
-                Factor by which the spatial dimensions (H and W) are reduced in the backbone. Both H and W are divided
-                by this value. Defaults to 1.
-            time_interval (`int`, *optional*):
-                Spacing factor applied between consecutive temporal position indices.Defaults to 1.
-            device (`str` or `torch.device`, *optional*):
-                Device on which the resulting tensor is allocated. If `None`, uses the current default device.
+            start_position (int)：
+                    添加到所有计算位置索引上的偏移量。
+            grid_thw ：
+                    当前图像或视频在 patch 嵌入后的特征布局网格 (T, H, W)。
+            temp_merge_size (int, 可选)：
+                    骨干网络中对时间维度的缩减因子。
+                    时间网格大小除以该值。默认为 1。
+            spatial_merge_size (int, 可选)：
+                    骨干网络中对空间维度（H 和 W）的缩减因子。
+                    H 和 W 均除以该值。默认为 1。
+            time_interval (int, 可选)：
+                    连续时间位置索引之间应用的间隔因子。默认为 1。
+            device (str 或 torch.device, 可选)：
+                    结果张量分配所在的设备。若为 None，则使用当前默认设备。
 
         Returns:
             torch.LongTensor of shape (3, sequence_length):
@@ -1026,6 +1040,7 @@ class Qwen3VLModel(Qwen3VLPreTrainedModel):
         video_grid_thw: torch.LongTensor | None = None,
         **kwargs: Unpack[TransformersKwargs],
     ) -> tuple | BaseModelOutputWithDeepstackFeatures:
+        """"获取视频特征向量"""
         r"""
         pixel_values_videos (`torch.FloatTensor` of shape `(batch_size, num_channels, image_size, image_size)`):
             The tensors corresponding to the input videos.
@@ -1044,6 +1059,7 @@ class Qwen3VLModel(Qwen3VLPreTrainedModel):
         image_grid_thw: torch.LongTensor | None = None,
         **kwargs: Unpack[TransformersKwargs],
     ) -> tuple | BaseModelOutputWithDeepstackFeatures:
+        """获取图像特征向量"""
         r"""
         pixel_values (`torch.FloatTensor` of shape `(batch_size, num_channels, image_size, image_size)`):
             The tensors corresponding to the input images.
@@ -1051,12 +1067,16 @@ class Qwen3VLModel(Qwen3VLPreTrainedModel):
             The temporal, height and width of feature shape of each image in LLM.
         """
         pixel_values = pixel_values.type(self.visual.dtype)
-        vision_output: BaseModelOutputWithDeepstackFeatures = self.visual(
+        vision_output: BaseModelOutputWithDeepstackFeatures = self.visual( # 视觉编码器
             pixel_values, grid_thw=image_grid_thw, return_dict=True, **kwargs
-        )
-        image_embeds = vision_output.pooler_output
+        )  # vision_output： [last_hidden_state,  # merger 前、1152 维的逐 patch 特征
+           #                 pooler_output,      # merger 后、3584 维、2×2 合并过的最终视觉 token
+           #                 deepstack_features]  # 第 8/16/24 层的中间特征（DeepStack 用）。
+
+        image_embeds = vision_output.pooler_output  # 一个batch里多张图混在一起的二维视觉token
+        # 按图切分
         split_sizes = (image_grid_thw.prod(-1) // self.visual.spatial_merge_size**2).tolist()
-        image_embeds = torch.split(image_embeds, split_sizes)
+        image_embeds = torch.split(image_embeds, split_sizes)   # 按图切分后的图像特征
         vision_output.pooler_output = image_embeds
 
         return vision_output
@@ -1069,8 +1089,7 @@ class Qwen3VLModel(Qwen3VLPreTrainedModel):
         video_features: torch.FloatTensor | None = None,
     ):
         """
-        Obtains multimodal placeholder mask from `input_ids` or `inputs_embeds`, and checks that the placeholder token count is
-        equal to the length of multimodal features. If the lengths are different, an error is raised.
+        从 input_ids 或 inputs_embeds 中获取多模态占位符掩码，并检查占位符令牌数量是否与多模态特征的长度相等。如果长度不同，则会引发错误。
         """
         if input_ids is None:
             special_image_mask = inputs_embeds == self.get_input_embeddings()(
@@ -1112,6 +1131,7 @@ class Qwen3VLModel(Qwen3VLPreTrainedModel):
         past_key_values: torch.Tensor | None = None,
         mm_token_type_ids: torch.IntTensor | None = None,
     ) -> torch.Tensor | None:
+        """计算3D位置索引"""
         past_key_values_length = 0 if past_key_values is None else past_key_values.get_seq_length()
         has_multimodal = image_grid_thw is not None or video_grid_thw is not None
         if has_multimodal and mm_token_type_ids is None and input_ids is not None:
@@ -1122,6 +1142,7 @@ class Qwen3VLModel(Qwen3VLPreTrainedModel):
             )
         can_compute_mrope = input_ids is not None and mm_token_type_ids is not None and has_multimodal
 
+        # 预训练阶段
         if can_compute_mrope and (self.rope_deltas is None or past_key_values_length == 0):
             position_ids, rope_deltas = self.get_rope_index(
                 input_ids,
@@ -1135,7 +1156,7 @@ class Qwen3VLModel(Qwen3VLPreTrainedModel):
         # generation (past_key_values_length > 0) or when only inputs_embeds is provided (no input_ids
         # to recompute from). Skip when input_ids is provided without past_key_values to avoid shape
         # mismatches from stale rope_deltas (e.g., training forward pass after generation).
-        elif self.rope_deltas is not None and (past_key_values_length > 0 or input_ids is None):
+        elif self.rope_deltas is not None and (past_key_values_length > 0 or input_ids is None):     # 增量解码
             batch_size, seq_length, _ = inputs_embeds.shape
             if attention_mask is not None:
                 position_ids = attention_mask.long().cumsum(-1) - 1
@@ -1147,6 +1168,7 @@ class Qwen3VLModel(Qwen3VLPreTrainedModel):
             delta = self.rope_deltas.repeat_interleave(batch_size // self.rope_deltas.shape[0], dim=0)
             position_ids = position_ids + delta.to(device=inputs_embeds.device)
         else:
+            # 信息不足——放弃，交回给模型默认逻辑
             # Can't build correct 3D positions. Let the model infer it
             position_ids = None
         return position_ids
@@ -1182,19 +1204,19 @@ class Qwen3VLModel(Qwen3VLPreTrainedModel):
         image_mask = None
         video_mask = None
 
-        if pixel_values is not None:
+        if pixel_values is not None:   # 图像像素
             image_outputs: BaseModelOutputWithDeepstackFeatures = self.get_image_features(
                 pixel_values, image_grid_thw, return_dict=True, **kwargs
             )
-            image_embeds = image_outputs.pooler_output
-            deepstack_image_embeds = image_outputs.deepstack_features
+            image_embeds = image_outputs.pooler_output  # merger 后、3584 维、2×2 合并过的最终视觉 token
+            deepstack_image_embeds = image_outputs.deepstack_features # 第 8/16/24 层的中间特征（DeepStack 用）
             image_embeds = torch.cat(image_embeds, dim=0).to(inputs_embeds.device, inputs_embeds.dtype)
-            image_mask, _ = self.get_placeholder_mask(
+            image_mask, _ = self.get_placeholder_mask(  # 获取图像特征的掩码
                 input_ids, inputs_embeds=inputs_embeds, image_features=image_embeds
             )
-            inputs_embeds = inputs_embeds.masked_scatter(image_mask, image_embeds)
+            inputs_embeds = inputs_embeds.masked_scatter(image_mask, image_embeds) # 将图像特征嵌入到输入嵌入中
 
-        if pixel_values_videos is not None:
+        if pixel_values_videos is not None: # 视频像素
             video_outputs: BaseModelOutputWithDeepstackFeatures = self.get_video_features(
                 pixel_values_videos, video_grid_thw, return_dict=True, **kwargs
             )
@@ -1204,12 +1226,12 @@ class Qwen3VLModel(Qwen3VLPreTrainedModel):
             _, video_mask = self.get_placeholder_mask(
                 input_ids, inputs_embeds=inputs_embeds, video_features=video_embeds
             )
-            inputs_embeds = inputs_embeds.masked_scatter(video_mask, video_embeds)
+            inputs_embeds = inputs_embeds.masked_scatter(video_mask, video_embeds) # 将视频特征嵌入到输入嵌入中
 
         visual_pos_masks = None
         deepstack_visual_embeds = None
         if image_mask is not None and video_mask is not None:
-            # aggregate visual_pos_masks and deepstack_visual_embeds
+            # 聚合 visual_pos_masks and deepstack_visual_embeds
             image_mask = image_mask[..., 0]
             video_mask = video_mask[..., 0]
             visual_pos_masks = image_mask | video_mask
@@ -1230,7 +1252,7 @@ class Qwen3VLModel(Qwen3VLPreTrainedModel):
             visual_pos_masks = video_mask
             deepstack_visual_embeds = deepstack_video_embeds
 
-        if position_ids is None:
+        if position_ids is None:   # 计算位置索引
             position_ids = self.compute_3d_position_ids(
                 input_ids=input_ids,
                 image_grid_thw=image_grid_thw,

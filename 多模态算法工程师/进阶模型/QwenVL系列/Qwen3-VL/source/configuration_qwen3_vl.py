@@ -39,14 +39,14 @@ class Qwen3VLVisionConfig(PreTrainedConfig):
     model_type = "qwen3_vl_vision"
     base_config_key = "vision_config"
 
-    depth: int = 27
-    hidden_size: int = 1152
-    hidden_act: str = "gelu_pytorch_tanh"
-    intermediate_size: int = 4304
-    num_heads: int = 16
-    in_channels: int = 3
+    depth: int = 27     # 模块深度
+    hidden_size: int = 1152   # 隐藏层大小
+    hidden_act: str = "gelu_pytorch_tanh"   # 激活函数
+    intermediate_size: int = 4304   # 中间层大小
+    num_heads: int = 16     # 注意力头数
+    in_channels: int = 3    # 输入通道数
     patch_size: int | list[int] | tuple[int, int] = 16
-    spatial_merge_size: int = 2
+    spatial_merge_size: int = 2     # 空间合并大小
     temporal_patch_size: int | list[int] | tuple[int, int] = 2
     out_hidden_size: int = 3584
     num_position_embeddings: int = 2304

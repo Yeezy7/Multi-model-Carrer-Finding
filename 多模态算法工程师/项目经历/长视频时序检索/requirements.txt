@@ -1,0 +1,2 @@
+# 训练与推理沿用 ../进阶模型/QwenVL系列/Qwen3-VL/requirements.txt 中的环境。
+av>=12.0.0

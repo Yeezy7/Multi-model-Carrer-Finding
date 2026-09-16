@@ -1,0 +1,3 @@
+{"id": "doc_001", "image_path": "./data/images/doc_001.png", "question": "请问这张文档的总金额是多少？", "answer": "¥1,239.50", "task": "docvqa"}
+{"id": "doc_002", "image_path": "./data/images/doc_002.png", "question": "表格中第二行的订单编号是什么？", "answer": "ORD-2048", "task": "docvqa"}
+{"id": "doc_003", "image_path": "./data/images/doc_003.png", "question": "图表中的增长率为多少？", "answer": "18.7%", "task": "chartqa"}
