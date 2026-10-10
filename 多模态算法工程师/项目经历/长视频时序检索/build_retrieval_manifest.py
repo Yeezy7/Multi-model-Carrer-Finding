@@ -9,13 +9,19 @@ from pathlib import Path
 from typing import Any
 
 
+_FRAME_CACHE: dict[str, list[tuple[float, str]]] = {}
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--annotations", type=Path, required=True, help="视频级标注 JSONL")
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--frame-root", type=Path, default=None, help="复用或保存帧图片的根目录，默认 output-dir/frames")
     parser.add_argument("--video-root", type=Path, default=None)
     parser.add_argument("--global-fps", type=float, default=0.5)
     parser.add_argument("--negative-ratio", type=float, default=2.0)
+    parser.add_argument("--hard-negative-window", type=float, default=4.0, help="边界 Hard Negative 距离边界的最大秒数")
+    parser.add_argument("--hard-negative-ratio", type=float, default=1.0, help="每个正帧最多保留的边界负帧比例")
     parser.add_argument("--positive-tolerance", type=float, default=0.5)
     parser.add_argument("--train-ratio", type=float, default=0.70)
     parser.add_argument("--val-ratio", type=float, default=0.15)
@@ -52,6 +58,7 @@ def load_annotations(path: Path, video_root: Path | None) -> list[dict[str, Any]
             records.append(
                 {
                     **record,
+                    "query_id": str(record.get("query_id") or record.get("pair_id") or f"{record['video_id']}#q0"),
                     "video_path": str(video_path.resolve()),
                     "query": str(record["query"]).strip(),
                     "gt_segments": segments,
@@ -94,75 +101,108 @@ def sample_video(record: dict[str, Any], args: argparse.Namespace) -> list[dict[
         raise FileNotFoundError(f"视频不存在: {video_path}")
     if args.global_fps <= 0:
         raise ValueError("global-fps 必须大于 0")
-    try:
-        container = av.open(str(video_path))
-        stream = container.streams.video[0]
-    except Exception as exc:
-        raise RuntimeError(f"无法打开视频: {video_path}") from exc
-    source_fps = float(stream.average_rate or stream.base_rate or 0.0)
-    frame_count = int(stream.frames or 0)
     duration = float(record.get("duration") or 0.0)
-    if frame_count <= 0 and source_fps > 0 and duration > 0:
-        # 部分公开 MP4 的 stts 元数据不提供 nb_frames，但仍可顺序解码。
-        # 用标注时长估算索引范围，避免把可解码视频误判为损坏。
-        frame_count = max(1, int(round(duration * source_fps)))
-    if source_fps <= 0 or frame_count <= 0:
-        container.close()
-        raise RuntimeError(f"无法读取视频元数据: {video_path}")
-    if duration <= 0:
-        duration = frame_count / source_fps
-    step = 1.0 / args.global_fps
-    timestamps = []
-    current = 0.0
-    while current < duration:
-        timestamps.append(current)
-        current += step
-    target_indices = {min(frame_count - 1, max(0, round(timestamp * source_fps))): timestamp for timestamp in timestamps}
+    cache_key = str(video_path.resolve())
+    if cache_key not in _FRAME_CACHE:
+        try:
+            container = av.open(str(video_path))
+            stream = container.streams.video[0]
+        except Exception as exc:
+            raise RuntimeError(f"无法打开视频: {video_path}") from exc
+        source_fps = float(stream.average_rate or stream.base_rate or 0.0)
+        frame_count = int(stream.frames or 0)
+        if frame_count <= 0 and source_fps > 0 and duration > 0:
+            # 部分公开 MP4 的 stts 元数据不提供 nb_frames，但仍可顺序解码。
+            # 用标注时长估算索引范围，避免把可解码视频误判为损坏。
+            frame_count = max(1, int(round(duration * source_fps)))
+        if source_fps <= 0 or frame_count <= 0:
+            container.close()
+            raise RuntimeError(f"无法读取视频元数据: {video_path}")
+        if duration <= 0:
+            duration = frame_count / source_fps
+        step = 1.0 / args.global_fps
+        timestamps = []
+        current = 0.0
+        while current < duration:
+            timestamps.append(current)
+            current += step
+        target_indices = {
+            min(frame_count - 1, max(0, round(timestamp * source_fps))): timestamp
+            for timestamp in timestamps
+        }
+        frame_root = (args.frame_root or (args.output_dir / "frames")) / str(record["video_id"])
+        frame_refs: list[tuple[float, str]] = []
+        try:
+            decoded_frames = container.decode(stream)
+            for frame_index, frame in enumerate(decoded_frames):
+                timestamp = target_indices.get(frame_index)
+                if timestamp is None:
+                    continue
+                image_path = frame_root / f"{timestamp:012.3f}.jpg"
+                if not args.dry_run:
+                    frame_root.mkdir(parents=True, exist_ok=True)
+                    if not image_path.is_file():
+                        frame.to_image().save(image_path, format="JPEG", quality=args.image_quality)
+                frame_refs.append((timestamp, str(image_path.resolve())))
+        except Exception as exc:
+            raise RuntimeError(f"视频解码失败: {video_path}") from exc
+        finally:
+            container.close()
+        _FRAME_CACHE[cache_key] = frame_refs
+    else:
+        frame_refs = _FRAME_CACHE[cache_key]
 
-    frame_root = args.output_dir / "frames" / str(record["video_id"])
+    boundaries = [boundary for segment in record["gt_segments"] for boundary in (segment["start"], segment["end"])]
     samples: list[dict[str, Any]] = []
-    frame_index = 0
-    try:
-        decoded_frames = container.decode(stream)
-        for frame_index, frame in enumerate(decoded_frames):
-            timestamp = target_indices.get(frame_index)
-            if timestamp is None:
-                continue
-            positive = in_gt(timestamp, record["gt_segments"], args.positive_tolerance)
-            image_path = frame_root / f"{timestamp:012.3f}.jpg"
-            if not args.dry_run:
-                frame_root.mkdir(parents=True, exist_ok=True)
-                frame.to_image().save(image_path, format="JPEG", quality=args.image_quality)
-            samples.append(
-                {
-                    "id": f"{record['video_id']}@{timestamp:.3f}",
-                    "image": str(image_path.resolve()),
-                    "instruction": record["query"],
-                    "response": "1" if positive else "0",
-                    "label": int(positive),
-                    "task": "retrieval",
-                    "video_id": record["video_id"],
-                    "timestamp": round(timestamp, 3),
-                    "duration": duration,
-                    "gt_segments": record["gt_segments"],
-                    "split": record["split"],
-                }
-            )
-    finally:
-        container.close()
+    for timestamp, image_path in frame_refs:
+        positive = in_gt(timestamp, record["gt_segments"], args.positive_tolerance)
+        hard_negative = (
+            not positive
+            and args.hard_negative_window > 0
+            and any(abs(timestamp - boundary) <= args.hard_negative_window for boundary in boundaries)
+        )
+        samples.append(
+            {
+                "id": f"{record['query_id']}@{timestamp:.3f}",
+                "image": image_path,
+                "instruction": record["query"],
+                "response": "1" if positive else "0",
+                "label": int(positive),
+                "task": "retrieval",
+                "video_id": record["video_id"],
+                "query_id": record["query_id"],
+                "timestamp": round(timestamp, 3),
+                "duration": duration,
+                "gt_segments": record["gt_segments"],
+                "split": record["split"],
+                "negative_type": "hard" if hard_negative else "random" if not positive else "positive",
+            }
+        )
     return samples
 
 
-def downsample_negatives(samples: list[dict[str, Any]], ratio: float, seed: int) -> list[dict[str, Any]]:
+def downsample_negatives(
+    samples: list[dict[str, Any]], ratio: float, hard_ratio: float, seed: int
+) -> list[dict[str, Any]]:
     if ratio < 0:
         raise ValueError("negative-ratio 不能小于 0")
+    if hard_ratio < 0:
+        raise ValueError("hard-negative-ratio 不能小于 0")
     positives = [sample for sample in samples if sample["label"] == 1]
-    negatives = [sample for sample in samples if sample["label"] == 0]
+    hard_negatives = [sample for sample in samples if sample["label"] == 0 and sample["negative_type"] == "hard"]
+    random_negatives = [sample for sample in samples if sample["label"] == 0 and sample["negative_type"] == "random"]
     if not positives:
         raise ValueError(f"样本 {samples[0]['video_id']} 没有正帧，无法构造相关性训练样本")
-    limit = min(len(negatives), max(1, round(len(positives) * ratio)))
-    random.Random(seed).shuffle(negatives)
-    return positives + negatives[:limit]
+    total_limit = min(len(hard_negatives) + len(random_negatives), max(1, round(len(positives) * ratio)))
+    hard_limit = min(len(hard_negatives), round(len(positives) * hard_ratio), total_limit)
+    rng = random.Random(seed)
+    rng.shuffle(hard_negatives)
+    rng.shuffle(random_negatives)
+    chosen = hard_negatives[:hard_limit]
+    chosen.extend(random_negatives[: total_limit - len(chosen)])
+    if len(chosen) < total_limit:
+        chosen.extend(hard_negatives[hard_limit : hard_limit + total_limit - len(chosen)])
+    return positives + chosen
 
 
 def main() -> None:
@@ -182,7 +222,9 @@ def main() -> None:
     all_samples: list[dict[str, Any]] = []
     for record in records:
         samples = sample_video(record, args)
-        all_samples.extend(downsample_negatives(samples, args.negative_ratio, args.seed))
+        all_samples.extend(
+            downsample_negatives(samples, args.negative_ratio, args.hard_negative_ratio, args.seed)
+        )
     summary = {
         "annotations": len(records),
         "samples": len(all_samples),
@@ -190,6 +232,8 @@ def main() -> None:
         "splits": {split: sum(sample["split"] == split for sample in all_samples) for split in ("train", "val", "test")},
         "global_fps": args.global_fps,
         "negative_ratio": args.negative_ratio,
+        "hard_negative_window": args.hard_negative_window,
+        "hard_negative_ratio": args.hard_negative_ratio,
     }
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     if args.dry_run:

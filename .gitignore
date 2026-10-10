@@ -23,6 +23,7 @@ AI-Agent/config.py
 多模态算法工程师/进阶模型/QwenVL系列/Qwen-VL/pretrained_ckpt
 
 **__pycache__/
+**/.venv/
 
 CLAUDE.md
 
@@ -32,3 +33,4 @@ AI-Agent/hello_agent/.env
 
 面试
 datasets
+多模态算法工程师/项目经历/长视频时序检索/output

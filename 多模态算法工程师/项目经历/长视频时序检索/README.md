@@ -71,7 +71,19 @@ data/retrieval/
 └── summary.json
 ```
 
-当前正样本定义为落在 GT 区间前后 `0.5` 秒容差内的全局帧；负样本默认按正样本数量的 2 倍随机下采样。后续需要增加 Hard Negative 时再扩展脚本。
+当前正样本定义为落在 GT 区间前后 `0.5` 秒容差内的全局帧；负样本默认按正样本数量的 2 倍下采样，并优先保留 GT 边界附近的 Hard Negative。`--hard-negative-window 4` 控制边界附近的秒数，`--hard-negative-ratio 1` 控制每个正帧最多保留的边界负帧比例。
+
+如果要在当前 100 个视频上保留多个 ActivityNet Query，可以先运行：
+
+```bash
+python expand_activitynet_queries.py \
+  --annotations data/annotations/train.json \
+  --base-subset data/activitynet_subset/activitynet_subset.jsonl \
+  --output data/activitynet_subset/activitynet_multiquery.jsonl \
+  --queries-per-video 3
+```
+
+同一视频的多个 Query 必须通过视频 ID 放在同一个 train/val/test split 中，不能按 Query 随机拆分。
 
 ## 训练 LoRA-R
 
@@ -109,7 +121,7 @@ CUDA_VISIBLE_DEVICES=0 python train_retrieval_lora.py \
   --epochs 1
 ```
 
-训练默认冻结视觉编码器和基座参数，只对语言侧 `q/k/v/o_proj` 添加 LoRA，与当前 Qwen3-VL 文档项目的 QLoRA 训练边界保持一致。
+当前训练脚本冻结基座参数，并对名称匹配的 `q/k/v/o_proj` 模块添加 LoRA；正式实验前应打印命中的模块，确认是否只覆盖预期的语言/跨模态模块。
 
 ## 输出相关性分数
 
@@ -126,4 +138,22 @@ CUDA_VISIBLE_DEVICES=0 python score_retrieval.py \
 - `score`：`sigmoid(logit(1) - logit(0))`，作为 `S_q(t)`；
 - `prediction`：以 0.5 为阈值的帧级预测。
 
-注意：这一阶段还没有 Temporal Importance Score 的变化项、窗口扩展、Temporal NMS 和 Temporal F1 评测；这些属于下一步，在 LoRA-R 能稳定输出分数后再接入。
+当前已补充 `build_temporal_candidates.py`，从 `score_retrieval.py` 的帧分数生成候选时间窗口：先使用局部时间平滑得到 Temporal Importance，再通过时间 NMS 选择种子帧，最后扩展为固定长度候选窗口，并计算窗口命中率与 Temporal IoU Recall。对 test 视频的完整 0.5 FPS 帧进行打分后，32 秒窗口的 video macro Recall@5（tIoU≥0.3）为 0.811，命中率@5 为 0.985，Recall@10（tIoU≥0.3）为 0.900；64 秒窗口的 tIoU 更高，但片段过长，会增加后续 VLM 理解成本，因此暂以 32 秒作为候选片段配置。
+
+```bash
+python build_temporal_candidates.py \
+  --scores outputs/retrieval_scores.jsonl \
+  --output outputs/temporal_candidates.jsonl \
+  --metrics-output outputs/temporal_metrics.json \
+  --top-k 1 5 10 \
+  --window-seconds 32 \
+  --nms-seconds 4
+```
+
+可以使用 `evaluate_retrieval.py` 计算 Query 宏平均和 video 宏平均的 Recall@K、Precision@K、AP：
+
+```bash
+python evaluate_retrieval.py \
+  --scores outputs/retrieval_scores.jsonl \
+  --output outputs/retrieval_metrics.json
+```
