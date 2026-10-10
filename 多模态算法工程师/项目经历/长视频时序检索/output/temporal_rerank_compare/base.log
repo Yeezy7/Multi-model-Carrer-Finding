@@ -1,0 +1,191 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:01<00:04,  1.47s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:03<00:03,  1.54s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:04<00:01,  1.35s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:04<00:00,  1.00it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:04<00:00,  1.16s/it]
+processed 10/1064
+processed 20/1064
+processed 30/1064
+processed 40/1064
+processed 50/1064
+processed 60/1064
+processed 70/1064
+processed 80/1064
+processed 90/1064
+processed 100/1064
+processed 110/1064
+processed 120/1064
+processed 130/1064
+processed 140/1064
+processed 150/1064
+processed 160/1064
+processed 170/1064
+processed 180/1064
+processed 190/1064
+processed 200/1064
+processed 210/1064
+processed 220/1064
+processed 230/1064
+processed 240/1064
+processed 250/1064
+processed 260/1064
+processed 270/1064
+processed 280/1064
+processed 290/1064
+processed 300/1064
+processed 310/1064
+processed 320/1064
+processed 330/1064
+processed 340/1064
+processed 350/1064
+processed 360/1064
+processed 370/1064
+processed 380/1064
+processed 390/1064
+processed 400/1064
+processed 410/1064
+processed 420/1064
+processed 430/1064
+processed 440/1064
+processed 450/1064
+processed 460/1064
+processed 470/1064
+processed 480/1064
+processed 490/1064
+processed 500/1064
+processed 510/1064
+processed 520/1064
+processed 530/1064
+processed 540/1064
+processed 550/1064
+processed 560/1064
+processed 570/1064
+processed 580/1064
+processed 590/1064
+processed 600/1064
+processed 610/1064
+processed 620/1064
+processed 630/1064
+processed 640/1064
+processed 650/1064
+processed 660/1064
+processed 670/1064
+processed 680/1064
+processed 690/1064
+processed 700/1064
+processed 710/1064
+processed 720/1064
+processed 730/1064
+processed 740/1064
+processed 750/1064
+processed 760/1064
+processed 770/1064
+processed 780/1064
+processed 790/1064
+processed 800/1064
+processed 810/1064
+processed 820/1064
+processed 830/1064
+processed 840/1064
+processed 850/1064
+processed 860/1064
+processed 870/1064
+processed 880/1064
+processed 890/1064
+processed 900/1064
+processed 910/1064
+processed 920/1064
+processed 930/1064
+processed 940/1064
+processed 950/1064
+processed 960/1064
+processed 970/1064
+processed 980/1064
+processed 990/1064
+processed 1000/1064
+processed 1010/1064
+processed 1020/1064
+processed 1030/1064
+processed 1040/1064
+processed 1050/1064
+processed 1060/1064
+processed 1064/1064
+{
+  "candidates": 1064,
+  "queries": 110,
+  "top_k_scored": 10,
+  "original_rank": {
+    "queries": 110,
+    "videos": 45,
+    "query_macro": {
+      "mean_best_tiou@1": 0.3671335144545454,
+      "hit@1": 0.7818181818181819,
+      "recall@1_tiou0.1": 0.7363636363636363,
+      "recall@1_tiou0.3": 0.5181818181818182,
+      "recall@1_tiou0.5": 0.32727272727272727,
+      "mean_best_tiou@5": 0.5377709538181819,
+      "hit@5": 0.9818181818181818,
+      "recall@5_tiou0.1": 0.9454545454545454,
+      "recall@5_tiou0.3": 0.7818181818181819,
+      "recall@5_tiou0.5": 0.5545454545454546,
+      "mean_best_tiou@10": 0.6010883135454548,
+      "hit@10": 0.990909090909091,
+      "recall@10_tiou0.1": 0.9818181818181818,
+      "recall@10_tiou0.3": 0.8818181818181818,
+      "recall@10_tiou0.5": 0.6454545454545455
+    },
+    "video_macro": {
+      "mean_best_tiou@1": 0.3776931897037038,
+      "hit@1": 0.7962962962962962,
+      "recall@1_tiou0.1": 0.7518518518518515,
+      "recall@1_tiou0.3": 0.5296296296296296,
+      "recall@1_tiou0.5": 0.32222222222222224,
+      "mean_best_tiou@5": 0.549601384111111,
+      "hit@5": 0.985185185185185,
+      "recall@5_tiou0.1": 0.9518518518518517,
+      "recall@5_tiou0.3": 0.811111111111111,
+      "recall@5_tiou0.5": 0.5814814814814815,
+      "mean_best_tiou@10": 0.6064157983703702,
+      "hit@10": 0.9925925925925926,
+      "recall@10_tiou0.1": 0.9851851851851853,
+      "recall@10_tiou0.3": 0.8999999999999998,
+      "recall@10_tiou0.5": 0.6666666666666667
+    }
+  },
+  "lora_u_rerank": {
+    "queries": 110,
+    "videos": 45,
+    "query_macro": {
+      "mean_best_tiou@1": 0.3863123371818182,
+      "hit@1": 0.8454545454545455,
+      "recall@1_tiou0.1": 0.8090909090909091,
+      "recall@1_tiou0.3": 0.5727272727272728,
+      "recall@1_tiou0.5": 0.32727272727272727,
+      "mean_best_tiou@5": 0.562357947,
+      "hit@5": 0.9727272727272728,
+      "recall@5_tiou0.1": 0.9636363636363636,
+      "recall@5_tiou0.3": 0.8363636363636363,
+      "recall@5_tiou0.5": 0.5909090909090909,
+      "mean_best_tiou@10": 0.6010883135454548,
+      "hit@10": 0.990909090909091,
+      "recall@10_tiou0.1": 0.9818181818181818,
+      "recall@10_tiou0.3": 0.8818181818181818,
+      "recall@10_tiou0.5": 0.6454545454545455
+    },
+    "video_macro": {
+      "mean_best_tiou@1": 0.4014961190740741,
+      "hit@1": 0.8555555555555554,
+      "recall@1_tiou0.1": 0.8259259259259257,
+      "recall@1_tiou0.3": 0.6074074074074074,
+      "recall@1_tiou0.5": 0.3407407407407408,
+      "mean_best_tiou@5": 0.5706587992962963,
+      "hit@5": 0.9777777777777776,
+      "recall@5_tiou0.1": 0.9703703703703701,
+      "recall@5_tiou0.3": 0.8555555555555555,
+      "recall@5_tiou0.5": 0.6148148148148148,
+      "mean_best_tiou@10": 0.6064157983703702,
+      "hit@10": 0.9925925925925926,
+      "recall@10_tiou0.1": 0.9851851851851853,
+      "recall@10_tiou0.3": 0.8999999999999998,
+      "recall@10_tiou0.5": 0.6666666666666667
+    }
+  },
+  "output": "多模态算法工程师/项目经历/长视频时序检索/output/temporal_rerank_compare/base_scores.jsonl"
+}

@@ -1,0 +1,9 @@
+{
+  "candidates": 540,
+  "queries": 110,
+  "valid_binary_answers": 540,
+  "parse_failure": 0,
+  "precision_iou03": 0.4965277777777778,
+  "recall_iou03": 0.5652173913043478,
+  "output": "多模态算法工程师/项目经历/长视频时序检索/output/candidate_understanding_lora_u_300videos_1000steps/predictions_top5.jsonl"
+}

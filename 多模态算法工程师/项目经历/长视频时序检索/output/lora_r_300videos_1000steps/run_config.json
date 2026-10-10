@@ -1,0 +1,41 @@
+{
+  "model": "pre-trained-model/Qwen3-VL-8B-Instruct",
+  "train_path": "datasets/ActivityNetCaptions/subset_300/retrieval_multiquery_hardneg_05fps/train.jsonl",
+  "val_path": "datasets/ActivityNetCaptions/subset_300/retrieval_multiquery_hardneg_05fps/val.jsonl",
+  "output_dir": "多模态算法工程师/项目经历/长视频时序检索/output/lora_r_300videos_1000steps",
+  "batch_size": 1,
+  "gradient_accumulation_steps": 8,
+  "epochs": 1.0,
+  "max_steps": 1000,
+  "learning_rate": 1e-05,
+  "warmup_ratio": 0.03,
+  "max_length": 1024,
+  "min_pixels": 262144,
+  "max_pixels": 524288,
+  "lora_r": 16,
+  "lora_alpha": 32,
+  "lora_dropout": 0.05,
+  "qlora": true,
+  "gradient_checkpointing": true,
+  "logging_steps": 5,
+  "save_steps": 100,
+  "save_total_limit": 2,
+  "seed": 42,
+  "resume_from_checkpoint": "none",
+  "dry_run": false,
+  "validate_batch_only": false,
+  "train_summary": {
+    "num_samples": 23844,
+    "positives": 12053,
+    "negatives": 11791,
+    "positive_rate": 0.5054940446233853,
+    "videos": 210
+  },
+  "val_summary": {
+    "num_samples": 5646,
+    "positives": 3075,
+    "negatives": 2571,
+    "positive_rate": 0.5446333687566419,
+    "videos": 45
+  }
+}

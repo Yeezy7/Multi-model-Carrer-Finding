@@ -1,0 +1,43 @@
+{
+  "model": "pre-trained-model/Qwen3-VL-8B-Instruct",
+  "train_path": "多模态算法工程师/项目经历/长视频时序检索/output/understanding_train_top10.jsonl",
+  "val_path": "多模态算法工程师/项目经历/长视频时序检索/output/understanding_val_top10.jsonl",
+  "output_dir": "多模态算法工程师/项目经历/长视频时序检索/output/lora_u_300videos_1000steps",
+  "batch_size": 1,
+  "gradient_accumulation_steps": 8,
+  "epochs": 1.0,
+  "max_steps": 1000,
+  "learning_rate": 1e-05,
+  "warmup_ratio": 0.03,
+  "max_length": 4096,
+  "min_pixels": 262144,
+  "max_pixels": 524288,
+  "lora_r": 16,
+  "lora_alpha": 32,
+  "lora_dropout": 0.05,
+  "qlora": true,
+  "gradient_checkpointing": true,
+  "logging_steps": 10,
+  "save_steps": 500,
+  "save_total_limit": 2,
+  "seed": 42,
+  "resume_from_checkpoint": "none",
+  "dry_run": false,
+  "validate_batch_only": false,
+  "train_summary": {
+    "num_samples": 4559,
+    "positives": 2402,
+    "negatives": 2157,
+    "positive_rate": 0.5268699276157052,
+    "videos": 210,
+    "queries": 507
+  },
+  "val_summary": {
+    "num_samples": 948,
+    "positives": 490,
+    "negatives": 458,
+    "positive_rate": 0.5168776371308017,
+    "videos": 45,
+    "queries": 109
+  }
+}

@@ -1,0 +1,66 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:01<00:04,  1.42s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:02<00:02,  1.49s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:04<00:01,  1.33s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:04<00:00,  1.00it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:04<00:00,  1.15s/it]
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+processed 10/540
+processed 20/540
+processed 30/540
+processed 40/540
+processed 50/540
+processed 60/540
+processed 70/540
+processed 80/540
+processed 90/540
+processed 100/540
+processed 110/540
+processed 120/540
+processed 130/540
+processed 140/540
+processed 150/540
+processed 160/540
+processed 170/540
+processed 180/540
+processed 190/540
+processed 200/540
+processed 210/540
+processed 220/540
+processed 230/540
+processed 240/540
+processed 250/540
+processed 260/540
+processed 270/540
+processed 280/540
+processed 290/540
+processed 300/540
+processed 310/540
+processed 320/540
+processed 330/540
+processed 340/540
+processed 350/540
+processed 360/540
+processed 370/540
+processed 380/540
+processed 390/540
+processed 400/540
+processed 410/540
+processed 420/540
+processed 430/540
+processed 440/540
+processed 450/540
+processed 460/540
+processed 470/540
+processed 480/540
+processed 490/540
+processed 500/540
+processed 510/540
+processed 520/540
+processed 530/540
+processed 540/540
+{
+  "candidates": 540,
+  "queries": 110,
+  "valid_binary_answers": 540,
+  "parse_failure": 0,
+  "precision_iou03": 0.4965277777777778,
+  "recall_iou03": 0.5652173913043478,
+  "output": "多模态算法工程师/项目经历/长视频时序检索/output/candidate_understanding_lora_u_300videos_1000steps/predictions_top5.jsonl"
+}

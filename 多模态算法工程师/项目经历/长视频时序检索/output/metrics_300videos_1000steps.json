@@ -1,0 +1,29 @@
+{
+  "scores": "多模态算法工程师/项目经历/长视频时序检索/output/test_scores_300videos_1000steps.jsonl",
+  "frames": 5511,
+  "queries": 110,
+  "videos": 45,
+  "positive_frames": 2776,
+  "query_macro": {
+    "recall@1": 0.7545454545454545,
+    "recall@5": 0.9272727272727272,
+    "recall@10": 0.990909090909091,
+    "recall@20": 0.990909090909091,
+    "precision@1": 0.7545454545454545,
+    "precision@5": 0.7054545454545454,
+    "precision@10": 0.6672727272727274,
+    "precision@20": 0.6042857142857143,
+    "average_precision": 0.6993622167575615
+  },
+  "video_macro": {
+    "recall@1": 0.7481481481481481,
+    "recall@5": 0.937037037037037,
+    "recall@10": 0.9925925925925927,
+    "recall@20": 0.9925925925925927,
+    "precision@1": 0.7481481481481481,
+    "precision@5": 0.7237037037037035,
+    "precision@10": 0.6796296296296297,
+    "precision@20": 0.6177601410934744,
+    "average_precision": 0.715270662813108
+  }
+}

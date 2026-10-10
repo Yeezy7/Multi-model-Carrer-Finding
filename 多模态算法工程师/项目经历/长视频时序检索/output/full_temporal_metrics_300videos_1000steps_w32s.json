@@ -1,0 +1,49 @@
+{
+  "queries": 110,
+  "videos": 45,
+  "query_macro": {
+    "mean_best_tiou@1": 0.3671335144545454,
+    "hit@1": 0.7818181818181819,
+    "recall@1_tiou0.1": 0.7363636363636363,
+    "recall@1_tiou0.3": 0.5181818181818182,
+    "recall@1_tiou0.5": 0.32727272727272727,
+    "mean_best_tiou@5": 0.5377709538181819,
+    "hit@5": 0.9818181818181818,
+    "recall@5_tiou0.1": 0.9454545454545454,
+    "recall@5_tiou0.3": 0.7818181818181819,
+    "recall@5_tiou0.5": 0.5545454545454546,
+    "mean_best_tiou@10": 0.6010883135454548,
+    "hit@10": 0.990909090909091,
+    "recall@10_tiou0.1": 0.9818181818181818,
+    "recall@10_tiou0.3": 0.8818181818181818,
+    "recall@10_tiou0.5": 0.6454545454545455
+  },
+  "video_macro": {
+    "mean_best_tiou@1": 0.3776931897037038,
+    "hit@1": 0.7962962962962962,
+    "recall@1_tiou0.1": 0.7518518518518515,
+    "recall@1_tiou0.3": 0.5296296296296296,
+    "recall@1_tiou0.5": 0.32222222222222224,
+    "mean_best_tiou@5": 0.549601384111111,
+    "hit@5": 0.985185185185185,
+    "recall@5_tiou0.1": 0.9518518518518517,
+    "recall@5_tiou0.3": 0.811111111111111,
+    "recall@5_tiou0.5": 0.5814814814814815,
+    "mean_best_tiou@10": 0.6064157983703702,
+    "hit@10": 0.9925925925925926,
+    "recall@10_tiou0.1": 0.9851851851851853,
+    "recall@10_tiou0.3": 0.8999999999999998,
+    "recall@10_tiou0.5": 0.6666666666666667
+  },
+  "scores": "多模态算法工程师/项目经历/长视频时序检索/output/full_test_scores_300videos_1000steps.jsonl",
+  "output": "多模态算法工程师/项目经历/长视频时序检索/output/full_temporal_candidates_300videos_1000steps_w32s.jsonl",
+  "top_k": [
+    1,
+    5,
+    10
+  ],
+  "window_seconds": 32.0,
+  "nms_seconds": 4.0,
+  "smooth_radius": 2.0,
+  "smooth_alpha": 0.25
+}

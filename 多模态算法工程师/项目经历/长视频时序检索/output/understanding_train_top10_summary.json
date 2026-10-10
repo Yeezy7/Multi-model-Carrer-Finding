@@ -1,0 +1,30 @@
+{
+  "samples": 4559,
+  "queries": 507,
+  "videos": 210,
+  "positives": 2402,
+  "negatives": 2157,
+  "positive_rate": 0.5268699276157052,
+  "negative_types": {
+    "random": 1387,
+    "hard": 770,
+    "positive": 2402
+  },
+  "candidate_ranks": {
+    "1": 499,
+    "2": 494,
+    "3": 496,
+    "4": 490,
+    "5": 485,
+    "6": 478,
+    "7": 449,
+    "8": 419,
+    "9": 396,
+    "10": 353
+  },
+  "num_frames": 4,
+  "top_k": 10,
+  "positive_iou": 0.3,
+  "hard_negative_iou": 0.1,
+  "output": "多模态算法工程师/项目经历/长视频时序检索/output/understanding_train_top10.jsonl"
+}

@@ -1,0 +1,9 @@
+{
+  "candidates": 540,
+  "queries": 110,
+  "valid_binary_answers": 540,
+  "parse_failure": 0,
+  "precision_iou03": 0.48417721518987344,
+  "recall_iou03": 0.6047430830039525,
+  "output": "多模态算法工程师/项目经历/长视频时序检索/output/candidate_understanding_300videos_1000steps_top5.jsonl"
+}
